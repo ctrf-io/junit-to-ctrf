@@ -182,3 +182,14 @@ export async function convertJUnitToCTRF(
   console.log('Writing CTRF report to:', finalOutputPath);
   await fs.outputJson(finalOutputPath, ctrfReport, { spaces: 2 });
 }
+
+export async function convertJUnitToCTRFReport(
+  junitPath: string,
+  toolName?: string,
+  envProps?: string[],
+  useSuiteName?: boolean
+): Promise<CtrfReport> {
+  const testCases = await parseJUnitReport(junitPath);
+  const envPropsObj = envProps ? Object.fromEntries(envProps.map(prop => prop.split('='))) : {};
+  return createCTRFReport(testCases, toolName, envPropsObj, useSuiteName);
+}
