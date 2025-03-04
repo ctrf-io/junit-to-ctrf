@@ -1,89 +1,47 @@
 import fs from 'fs-extra';
-import path from 'path';
-import xml2js from 'xml2js';
 import { CtrfReport, CtrfTest, Tool } from '../types/ctrf';
+import { readJUnitReportsFromGlob } from './read';
+import path from 'path';
 
-interface JUnitTestCase {
-  suite: string;
-  classname: string;
-  name: string;
-  time: string;
-  hasFailure: boolean;
-  failureTrace: string | undefined,
-  failureMessage: string | undefined,
-  failureType: string | undefined,
-  hasError: boolean,
-  errorTrace: string | undefined,
-  errorMessage: string | undefined,
-  errorType: string | undefined,
-  file?: string,
-  lineno?: string,
-  skipped?: boolean;
+interface ConvertOptions {
+  outputPath?: string;
+  toolName?: string;
+  envProps?: string[];
+  useSuiteName?: boolean;
 }
 
-async function parseJUnitReport(filePath: string): Promise<JUnitTestCase[]> {
-  console.log('Reading JUnit report file:', filePath);
-  const xml = await fs.readFile(filePath, 'utf-8');
-  const result = await xml2js.parseStringPromise(xml);
-  const testCases: JUnitTestCase[] = [];
+/**
+ * Convert JUnit XML report(s) to CTRF
+ * @param pattern - Path to JUnit XML file or glob pattern
+ * @param options - Optional options for the conversion
+ * @returns Promise that resolves when the conversion is complete
+ */
+export async function convertJUnitToCTRFReport(
+  pattern: string,
+  options: ConvertOptions = {}
+): Promise<CtrfReport | null> {
+  const { outputPath, toolName, envProps, useSuiteName } = options;
+  const testCases = await readJUnitReportsFromGlob(pattern);
+  const envPropsObj = envProps ? Object.fromEntries(envProps.map(prop => prop.split('='))) : {};
 
-  const parseTestSuite = (suite: any, suiteName: string) => {
-    if (suite.testcase) {
-      suite.testcase.forEach((testCase: any) => {
-        const { classname, file, lineno, name, time } = testCase.$;
-
-        const hasFailure = testCase.failure !== undefined;
-        const failureTrace = hasFailure ? (testCase.failure[0]?._ || '') : undefined;
-        const failureMessage = hasFailure ? (testCase.failure[0]?.$?.message || '') : undefined;
-        const failureType = hasFailure ? (testCase.failure[0]?.$?.type || '') : undefined;
-
-        const hasError = testCase.error !== undefined;
-        const errorTrace = hasError ? (testCase.error[0]?._ || '') : undefined;
-        const errorMessage = hasError ? (testCase.error[0]?.$?.message || '') : undefined;
-        const errorType = hasError ? (testCase.error[0]?.$?.type || '') : undefined;
-
-        const skipped = testCase.skipped !== undefined;
-        testCases.push({
-          suite: suiteName,
-          classname,
-          name,
-          time,
-          file,
-          lineno,
-          hasFailure,
-          failureTrace,
-          failureMessage,
-          failureType,
-          hasError,
-          errorTrace,
-          errorMessage,
-          errorType,
-          skipped,
-        });
-      });
-    }
-    if (suite.testsuite) {
-      suite.testsuite.forEach((nestedSuite: any) => {
-        const nestedSuiteName = nestedSuite.$.name || suiteName;
-        parseTestSuite(nestedSuite, nestedSuiteName);
-      });
-    }
-  };
-
-  if (result.testsuites && result.testsuites.testsuite) {
-    result.testsuites.testsuite.forEach((suite: any) => {
-      const suiteName = suite.$.name;
-      parseTestSuite(suite, suiteName);
-    });
-  } else if (result.testsuite) {
-    const suite = result.testsuite;
-    const suiteName = suite.$.name;
-    parseTestSuite(suite, suiteName);
-  } else {
-    console.warn('No test suites found in the provided file.');
+  if (testCases.length === 0) {
+    console.warn('No test cases found in the provided path. No CTRF report generated.');
+    return null;
   }
+  
+  console.log(`Converting ${testCases.length} test cases to CTRF format`);
+  const ctrfReport = createCTRFReport(testCases, toolName, envPropsObj, useSuiteName);
+  
+  if (outputPath) {
+  const finalOutputPath = path.resolve(outputPath)
+  const outputDir = path.dirname(finalOutputPath);
+  await fs.ensureDir(outputDir);
 
-  return testCases;
+  console.log('Writing CTRF report to:', finalOutputPath);
+  await fs.outputJson(finalOutputPath, ctrfReport, { spaces: 2 });
+  console.log(`CTRF report written to ${outputPath}`);
+  }
+  return ctrfReport;
 }
 
 function convertToCTRFTest(testCase: JUnitTestCase, useSuiteName: boolean): CtrfTest {
@@ -160,36 +118,4 @@ function createCTRFReport(
   }
 
   return report;
-}
-
-export async function convertJUnitToCTRF(
-  junitPath: string,
-  outputPath?: string,
-  toolName?: string,
-  envProps?: string[],
-  useSuiteName?: boolean
-): Promise<void> {
-  const testCases = await parseJUnitReport(junitPath);
-  const envPropsObj = envProps ? Object.fromEntries(envProps.map(prop => prop.split('='))) : {};
-  const ctrfReport = createCTRFReport(testCases, toolName, envPropsObj, useSuiteName);
-
-  const defaultOutputPath = path.join('ctrf', 'ctrf-report.json');
-  const finalOutputPath = path.resolve(outputPath || defaultOutputPath);
-
-  const outputDir = path.dirname(finalOutputPath);
-  await fs.ensureDir(outputDir);
-
-  console.log('Writing CTRF report to:', finalOutputPath);
-  await fs.outputJson(finalOutputPath, ctrfReport, { spaces: 2 });
-}
-
-export async function convertJUnitToCTRFReport(
-  junitPath: string,
-  toolName?: string,
-  envProps?: string[],
-  useSuiteName?: boolean
-): Promise<CtrfReport> {
-  const testCases = await parseJUnitReport(junitPath);
-  const envPropsObj = envProps ? Object.fromEntries(envProps.map(prop => prop.split('='))) : {};
-  return createCTRFReport(testCases, toolName, envPropsObj, useSuiteName);
 }

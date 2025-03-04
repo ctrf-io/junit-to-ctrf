@@ -33,6 +33,28 @@ Explore more <a href="https://www.ctrf.io/integrations">integrations</a>
 npx junit-to-ctrf path/to/junit.xml
 ```
 
+or glob pattern:
+
+```sh
+npx junit-to-ctrf "test-results/**/*.xml"
+```
+
+Support both single file paths and glob patterns.
+
+## Commands
+
+### Default Command
+
+```sh
+npx junit-to-ctrf <path-or-glob-pattern> [options]
+```
+
+### Convert Command
+
+```sh
+npx junit-to-ctrf convert <path-or-glob-pattern> [options]
+```
+
 ## Options
 
 `-o`, `--output` <output>: Output directory and filename for the CTRF report. If not provided, defaults to ctrf/ctrf-report.json.
@@ -49,7 +71,7 @@ npx junit-to-ctrf path/to/junit.xml
 Convert a JUnit XML report to the default CTRF report location (ctrf/ctrf-report.json):
 
 ```sh
-npx junit-to-ctrf path/to/junit.xml
+npx junit-to-ctrf "test-results/**/*.xml"
 ```
 
 ### Specify Output File
@@ -57,7 +79,7 @@ npx junit-to-ctrf path/to/junit.xml
 Convert a JUnit XML report to a specified output file:
 
 ```sh
-npx junit-to-ctrf path/to/junit.xml -o path/to/output/ctrf-report.json
+npx junit-to-ctrf "test-results/**/*.xml" -o ctrf/combined-report.json
 ```
 
 ### Include Tool Name

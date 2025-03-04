@@ -23,7 +23,9 @@
   "homepage": "https://ctrf.io",
   "license": "MIT",
   "dependencies": {
+    "ctrf": "^0.0.12",
     "fs-extra": "^11.2.0",
+    "glob": "^11.0.1",
     "typescript": "^5.4.5",
     "xml2js": "^0.6.2",
     "yargs": "^17.7.2"

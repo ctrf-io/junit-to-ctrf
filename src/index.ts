@@ -1,1 +1,1 @@
-export { convertJUnitToCTRF } from './convert';
+export { convertJUnitToCTRFReport } from './convert';

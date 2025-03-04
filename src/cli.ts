@@ -2,23 +2,24 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { convertJUnitToCTRF } from './convert';
+import { convertJUnitToCTRFReport } from './convert';
 
 yargs(hideBin(process.argv))
   .usage('Usage: $0 <junit.xml> [options]')
   .command(
-    '$0 <path>',
-    'Convert JUnit XML report to CTRF',
+    '$0 <pattern>',
+    'Convert JUnit XML report(s) to CTRF',
     (yargs) => {
       return yargs
-        .positional('path', {
-          describe: 'Path to the JUnit XML file',
-          type: 'string',
-          demandOption: true,
-        })
+      .positional('pattern', {
+        describe: 'Glob pattern to match JUnit XML files (e.g., "test-results/**/*.xml")',
+        type: 'string',
+        demandOption: true,
+      })
         .option('output', {
           alias: 'o',
           type: 'string',
+          default: 'ctrf/ctrf-report.json',
           description: 'Output directory and filename for the CTRF report',
         })
         .option('tool', {
@@ -40,8 +41,8 @@ yargs(hideBin(process.argv))
     },
     async (argv) => {
       try {
-        const { path, output, tool, env, useSuiteName  } = argv;
-        await convertJUnitToCTRF(path as string, output as string, tool as string, env as string[], useSuiteName);
+        const { pattern, output, tool, env, useSuiteName  } = argv;
+        await convertJUnitToCTRFReport(pattern as string, { outputPath: output as string, toolName: tool as string, envProps: env as string[], useSuiteName: useSuiteName as boolean });
         console.log('Conversion completed successfully.');
       } catch (error: any) {
         console.error('Error:', error.message);
