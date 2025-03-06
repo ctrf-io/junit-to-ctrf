@@ -8,6 +8,7 @@ interface ConvertOptions {
   toolName?: string;
   envProps?: string[];
   useSuiteName?: boolean;
+  log?: boolean;
 }
 
 /**
@@ -21,7 +22,7 @@ export async function convertJUnitToCTRFReport(
   options: ConvertOptions = {}
 ): Promise<CtrfReport | null> {
   const { outputPath, toolName, envProps, useSuiteName } = options;
-  const testCases = await readJUnitReportsFromGlob(pattern);
+  const testCases = await readJUnitReportsFromGlob(pattern, { log: options.log });
   const envPropsObj = envProps ? Object.fromEntries(envProps.map(prop => prop.split('='))) : {};
 
   if (testCases.length === 0) {
@@ -29,7 +30,7 @@ export async function convertJUnitToCTRFReport(
     return null;
   }
   
-  console.log(`Converting ${testCases.length} test cases to CTRF format`);
+  if (options.log) console.log(`Converting ${testCases.length} test cases to CTRF format`);
   const ctrfReport = createCTRFReport(testCases, toolName, envPropsObj, useSuiteName);
   
   if (outputPath) {
@@ -37,9 +38,9 @@ export async function convertJUnitToCTRFReport(
   const outputDir = path.dirname(finalOutputPath);
   await fs.ensureDir(outputDir);
 
-  console.log('Writing CTRF report to:', finalOutputPath);
+  if (options.log) console.log('Writing CTRF report to:', finalOutputPath);
   await fs.outputJson(finalOutputPath, ctrfReport, { spaces: 2 });
-  console.log(`CTRF report written to ${outputPath}`);
+  if (options.log) console.log(`CTRF report written to ${outputPath}`);
   }
   return ctrfReport;
 }

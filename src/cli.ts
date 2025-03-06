@@ -42,7 +42,7 @@ yargs(hideBin(process.argv))
     async (argv) => {
       try {
         const { pattern, output, tool, env, useSuiteName  } = argv;
-        await convertJUnitToCTRFReport(pattern as string, { outputPath: output as string, toolName: tool as string, envProps: env as string[], useSuiteName: useSuiteName as boolean });
+        await convertJUnitToCTRFReport(pattern as string, { outputPath: output as string, toolName: tool as string, envProps: env as string[], useSuiteName: useSuiteName as boolean, log: true });
         console.log('Conversion completed successfully.');
       } catch (error: any) {
         console.error('Error:', error.message);

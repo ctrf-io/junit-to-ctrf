@@ -36,7 +36,7 @@ async function main() {
     //   await convertAndSaveToFile();
 
     const report = await convertJUnitToCTRFReport(
-        'test-junit.xml',
+        './*.xml',
         {
             outputPath: 'ctrf/output-report.json',
             toolName: 'junit-test-runner',

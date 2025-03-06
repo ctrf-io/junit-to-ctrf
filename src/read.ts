@@ -7,19 +7,19 @@ import { glob } from 'glob';
  * @param globPattern - The glob pattern to match JUnit XML files
  * @returns Promise resolving to an array of all test cases from all matching files
  */
-export async function readJUnitReportsFromGlob(globPattern: string): Promise<JUnitTestCase[]> {
-    console.log('Searching for JUnit reports matching pattern:', globPattern);
+export async function readJUnitReportsFromGlob(globPattern: string, options: { log?: boolean } = {}): Promise<JUnitTestCase[]> {
+    if (options.log) console.log('Searching for JUnit reports matching pattern:', globPattern);
 
     const files = await glob(globPattern);
 
     if (files.length === 0) {
-        console.warn('No files found matching the pattern:', globPattern);
+        if (options.log) console.warn('No files found matching the pattern:', globPattern);
         return [];
     }
 
-    console.log(`Found ${files.length} JUnit report files`);
+    if (options.log) console.log(`Found ${files.length} JUnit report files`);
 
-    const allTestCasesPromises = files.map(file => parseJUnitReport(file));
+    const allTestCasesPromises = files.map(file => parseJUnitReport(file, options));
     const testCasesArrays = await Promise.all(allTestCasesPromises);
 
     return testCasesArrays.flat();
@@ -30,8 +30,8 @@ export async function readJUnitReportsFromGlob(globPattern: string): Promise<JUn
  * @param filePath - Path to the JUnit XML file
  * @returns Promise resolving to an array of test cases
  */
-export async function parseJUnitReport(filePath: string): Promise<JUnitTestCase[]> {
-    console.log('Reading JUnit report file:', filePath);
+export async function parseJUnitReport(filePath: string, options: { log?: boolean } = {}): Promise<JUnitTestCase[]> {
+    if (options.log) console.log('Reading JUnit report file:', filePath);
     const xml = await fs.readFile(filePath, 'utf-8');
     const result = await xml2js.parseStringPromise(xml);
     const testCases: JUnitTestCase[] = [];
@@ -89,7 +89,7 @@ export async function parseJUnitReport(filePath: string): Promise<JUnitTestCase[
         const suiteName = suite.$.name;
         parseTestSuite(suite, suiteName);
     } else {
-        console.warn('No test suites found in the provided file.');
+        if (options.log) console.warn('No test suites found in the provided file.');
     }
 
     return testCases;
