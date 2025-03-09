@@ -1,6 +1,6 @@
 {
   "name": "junit-to-ctrf",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Convert JUnit XML reports to CTRF JSON",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
