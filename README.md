@@ -39,16 +39,6 @@ or glob pattern:
 npx junit-to-ctrf "test-results/**/*.xml"
 ```
 
-Support both single file paths and glob patterns.
-
-## Commands
-
-### Default Command
-
-```sh
-npx junit-to-ctrf <path-or-glob-pattern> [options]
-```
-
 ## Options
 
 `-o`, `--output` <output>: Output directory and filename for the CTRF report. If not provided, defaults to ctrf/ctrf-report.json.
