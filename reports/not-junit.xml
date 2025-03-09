@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+    <book id="bk101">
+        <author>Stephen King</author>
+        <title>The Shining</title>
+        <genre>Horror</genre>
+        <price>9.99</price>
+        <publish_date>1977-01-28</publish_date>
+        <description>A family becomes caretakers of an isolated hotel for the winter where a sinister presence influences the father.</description>
+    </book>
+    <book id="bk102">
+        <author>Jane Austen</author>
+        <title>Pride and Prejudice</title>
+        <genre>Romance</genre>
+        <price>7.99</price>
+        <publish_date>1813-01-28</publish_date>
+        <description>The story follows the main character Elizabeth Bennet as she deals with issues of manners, upbringing, morality, education, and marriage.</description>
+    </book>
+</catalog>

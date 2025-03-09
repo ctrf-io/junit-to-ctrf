@@ -6,10 +6,12 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "npx tsc",
-    "run:junit": "node dist/cli.js test-junit.xml",
-    "run:minitest": "node dist/cli.js test-minitest-junit.xml",
-    "run:surefire": "node dist/cli.js test-surefire.xml", 
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run:junit": "node dist/cli.js reports/test-junit.xml --output reports/test-junit-ctrf.json",
+    "run:minitest": "node dist/cli.js reports/test-minitest-junit.xml --output reports/test-minitest-junit-ctrf.json",
+    "run:surefire": "node dist/cli.js reports/test-surefire.xml --output reports/test-surefire-ctrf.json", 
+    "run:glob": "node dist/cli.js \"reports/*.xml\" --output reports/test-glob-ctrf.json",
+    "test": "jest",
+    "test:e2e": "jest --config jest.config.js"
   },
   "bin": {
     "junit-to-ctrf": "./dist/cli.js"

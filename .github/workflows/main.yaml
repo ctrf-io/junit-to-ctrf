@@ -18,5 +18,11 @@ jobs:
       run: npm install
     - name: Build
       run: npx tsc
-    - name: Convert
-      run: npx junit-to-ctrf test.xml
+    - name: Run against junit
+      run: npm run run:junit
+    - name: Run against minitest
+      run: npm run run:minitest
+    - name: Run against surefire
+      run: npm run run:surefire
+    - name: Run against glob
+      run: npm run run:glob
