@@ -49,12 +49,6 @@ Support both single file paths and glob patterns.
 npx junit-to-ctrf <path-or-glob-pattern> [options]
 ```
 
-### Convert Command
-
-```sh
-npx junit-to-ctrf convert <path-or-glob-pattern> [options]
-```
-
 ## Options
 
 `-o`, `--output` <output>: Output directory and filename for the CTRF report. If not provided, defaults to ctrf/ctrf-report.json.
