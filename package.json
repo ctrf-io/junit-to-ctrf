@@ -1,7 +1,8 @@
 {
   "name": "junit-to-ctrf",
-  "version": "0.0.10-next.0",
+  "version": "0.0.10-next.1",
   "description": "Convert JUnit XML reports to CTRF JSON",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -11,7 +12,9 @@
     "run:surefire": "node dist/cli.js reports/test-surefire.xml --output reports/test-surefire-ctrf.json",
     "run:glob": "node dist/cli.js \"reports/*.xml\" --output reports/test-glob-ctrf.json",
     "test": "jest",
-    "test:e2e": "jest --config jest.config.js"
+    "test:e2e": "jest --config jest.config.js",
+    "docs": "typedoc",
+    "docs:watch": "typedoc --watch"
   },
   "bin": {
     "junit-to-ctrf": "./dist/cli.js"
@@ -25,18 +28,20 @@
   "homepage": "https://ctrf.io",
   "license": "MIT",
   "dependencies": {
-    "ctrf": "^0.0.13-next.1",
-    "fs-extra": "^11.2.0",
-    "glob": "^11.0.1",
-    "typescript": "^5.4.5",
+    "ctrf": "^0.0.13-next.2",
+    "fs-extra": "^11.3.0",
+    "glob": "^11.0.3",
+    "typescript": "^5.9.2",
     "xml2js": "^0.6.2",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.12.7",
+    "@types/node": "^24.1.0",
     "@types/xml2js": "^0.4.14",
     "@types/yargs": "^17.0.32",
-    "typescript": "^5.4.5"
+    "typedoc": "^0.28.9",
+    "typedoc-plugin-markdown": "^4.8.0",
+    "typescript": "^5.9.2"
   }
 }

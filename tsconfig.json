@@ -1,12 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
+    "target": "ES2023",
+    "module": "ESNext",
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
+    "declarationDir": "./dist",
     "forceConsistentCasingInFileNames": true
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "src/__tests__/**/*",
+    "dist/**/*",
+    "node_modules/**/*"
+  ]
 }

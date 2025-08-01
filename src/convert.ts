@@ -1,9 +1,12 @@
 import fs from 'fs-extra';
 import type { Report, Test, Tool } from 'ctrf';
 import type { JUnitTestCase } from '../types/junit';
-import { readJUnitReportsFromGlob } from './read';
+import { readJUnitReportsFromGlob } from './read.js';
 import path from 'path';
 
+/**
+ * Options for the conversion
+ */
 interface ConvertOptions {
   outputPath?: string;
   toolName?: string;

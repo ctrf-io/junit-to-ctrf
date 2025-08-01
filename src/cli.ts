@@ -2,7 +2,7 @@
 
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { convertJUnitToCTRFReport } from './convert';
+import { convertJUnitToCTRFReport } from './convert.js';
 
 yargs(hideBin(process.argv))
   .usage('Usage: $0 <junit.xml> [options]')

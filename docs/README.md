@@ -1,3 +1,7 @@
+**JUnit to CTRF v0.0.10-next.0**
+
+***
+
 # Convert JUnit XML to CTRF JSON
 
 > Convert JUnit reports to CTRF reports
@@ -29,19 +33,11 @@ Explore more <a href="https://www.ctrf.io/integrations">integrations</a>
 
 ## Installation
 
+As a dependency:
+
 ```sh
-npm install junit-to-ctrf@0.0.10-next.1
+npm install junit-to-ctrf@0.0.10-next.0
 ```
-
-```ts
-import { convertJUnitToCTRFReport } from 'junit-to-ctrf';
-
-const report = await convertJUnitToCTRFReport('path/to/junit.xml');
-```
-
-## API reference
-
-See [API reference](./docs) for more details.
 
 ## CLI Usage
 
@@ -64,7 +60,6 @@ npx junit-to-ctrf "test-results/**/*.xml"
 `-u`, `--use-suite-name` <useSuiteName>: Use suite name in the test name, defaults to true.
 
 `-e`, `--env` <envProperties>: Environment properties to include in the CTRF report. Accepts multiple properties in the format KEY=value.
-
 
 ## Examples
 
