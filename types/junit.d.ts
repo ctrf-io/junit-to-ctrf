@@ -1,4 +1,4 @@
-interface JUnitTestCase {
+export interface JUnitTestCase {
     suite: string;
     classname: string;
     name: string;

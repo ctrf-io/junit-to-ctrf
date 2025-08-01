@@ -1,6 +1,6 @@
 {
   "name": "junit-to-ctrf",
-  "version": "0.0.9",
+  "version": "0.0.10-next.0",
   "description": "Convert JUnit XML reports to CTRF JSON",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,7 @@
     "build": "npx tsc",
     "run:junit": "node dist/cli.js reports/test-junit.xml --output reports/test-junit-ctrf.json",
     "run:minitest": "node dist/cli.js reports/test-minitest-junit.xml --output reports/test-minitest-junit-ctrf.json",
-    "run:surefire": "node dist/cli.js reports/test-surefire.xml --output reports/test-surefire-ctrf.json", 
+    "run:surefire": "node dist/cli.js reports/test-surefire.xml --output reports/test-surefire-ctrf.json",
     "run:glob": "node dist/cli.js \"reports/*.xml\" --output reports/test-glob-ctrf.json",
     "test": "jest",
     "test:e2e": "jest --config jest.config.js"
@@ -25,7 +25,7 @@
   "homepage": "https://ctrf.io",
   "license": "MIT",
   "dependencies": {
-    "ctrf": "^0.0.12",
+    "ctrf": "^0.0.13-next.1",
     "fs-extra": "^11.2.0",
     "glob": "^11.0.1",
     "typescript": "^5.4.5",

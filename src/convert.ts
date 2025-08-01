@@ -1,5 +1,6 @@
 import fs from 'fs-extra';
-import { CtrfReport, CtrfTest, Tool } from '../types/ctrf';
+import type { Report, Test, Tool } from 'ctrf';
+import type { JUnitTestCase } from '../types/junit';
 import { readJUnitReportsFromGlob } from './read';
 import path from 'path';
 
@@ -20,7 +21,7 @@ interface ConvertOptions {
 export async function convertJUnitToCTRFReport(
   pattern: string,
   options: ConvertOptions = {}
-): Promise<CtrfReport | null> {
+): Promise<Report | null> {
   const { outputPath, toolName, envProps, useSuiteName } = options;
   const testCases = await readJUnitReportsFromGlob(pattern, { log: options.log });
   const envPropsObj = envProps ? Object.fromEntries(envProps.map(prop => prop.split('='))) : {};
@@ -45,8 +46,8 @@ export async function convertJUnitToCTRFReport(
   return ctrfReport;
 }
 
-function convertToCTRFTest(testCase: JUnitTestCase, useSuiteName: boolean): CtrfTest {
-  let status: CtrfTest['status'] = 'other';
+function convertToCTRFTest(testCase: JUnitTestCase, useSuiteName: boolean): Test {
+  let status: Test['status'] = 'other';
 
   if (testCase.hasFailure) {
     status = 'failed';
@@ -83,7 +84,7 @@ function createCTRFReport(
   toolName?: string,
   envProps?: Record<string, any>,
   useSuiteName?: boolean
-): CtrfReport {
+): Report {
   const ctrfTests = testCases.map(testCase => convertToCTRFTest(testCase, !!useSuiteName));
   const passed = ctrfTests.filter(test => test.status === 'passed').length;
   const failed = ctrfTests.filter(test => test.status === 'failed').length;
@@ -106,7 +107,11 @@ function createCTRFReport(
     name: toolName || 'junit-to-ctrf',
   };
 
-  const report: CtrfReport = {
+  const report: Report = {
+    reportFormat: 'CTRF',
+    specVersion: '0.0.0',
+    generatedBy: 'junit-to-ctrf',
+    timestamp: new Date().toISOString(),
     results: {
       tool,
       summary,
