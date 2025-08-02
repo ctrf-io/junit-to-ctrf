@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import xml2js from 'xml2js';
 import { glob } from 'glob';
-import type { JUnitTestCase } from '../types/junit';
+import type { JUnitTestCase } from '../types/junit.js';
 
 /**
  * Read JUnit report files matching a glob pattern

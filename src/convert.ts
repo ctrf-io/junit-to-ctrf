@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import type { Report, Test, Tool } from 'ctrf';
-import type { JUnitTestCase } from '../types/junit';
+import type { JUnitTestCase } from '../types/junit.js';
 import { readJUnitReportsFromGlob } from './read.js';
 import path from 'path';
 

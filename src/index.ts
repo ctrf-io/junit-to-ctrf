@@ -1,2 +1,2 @@
-export { convertJUnitToCTRFReport } from './convert';
-export type { ConvertOptions } from './convert';
+export { convertJUnitToCTRFReport } from './convert.js';
+export type { ConvertOptions } from './convert.js';
