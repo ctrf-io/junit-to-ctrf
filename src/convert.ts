@@ -7,7 +7,7 @@ import path from 'path';
 /**
  * Options for the conversion
  */
-interface ConvertOptions {
+export interface ConvertOptions {
   outputPath?: string;
   toolName?: string;
   envProps?: string[];
