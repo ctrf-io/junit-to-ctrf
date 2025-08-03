@@ -3,26 +3,26 @@ name: Build
 on:
   push:
     branches:
-      - '**'
+      - "**"
   pull_request:
     branches:
-      - '**'
+      - "**"
 
 jobs:
   testing:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Install dependencies
-      run: npm install
-    - name: Build
-      run: npx tsc
-    - name: Run against junit
-      run: npm run run:junit
-    - name: Run against minitest
-      run: npm run run:minitest
-    - name: Run against surefire
-      run: npm run run:surefire
-    - name: Run against glob
-      run: npm run run:glob
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npx tsc
+      - name: Run against junit
+        run: npm run run:junit
+      - name: Run against minitest
+        run: npm run run:minitest
+      - name: Run against surefire
+        run: npm run run:surefire
+      - name: Run against glob
+        run: npm run run:glob

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2023",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -13,9 +13,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["src/**/*"],
-  "exclude": [
-    "src/__tests__/**/*",
-    "dist/**/*",
-    "node_modules/**/*"
-  ]
+  "exclude": ["src/__tests__/**/*", "dist/**/*", "node_modules/**/*"]
 }

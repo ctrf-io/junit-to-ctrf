@@ -34,9 +34,9 @@ npm install junit-to-ctrf@0.0.10-next.1
 ```
 
 ```ts
-import { convertJUnitToCTRFReport } from 'junit-to-ctrf';
+import { convertJUnitToCTRFReport } from "junit-to-ctrf";
 
-const report = await convertJUnitToCTRFReport('path/to/junit.xml');
+const report = await convertJUnitToCTRFReport("path/to/junit.xml");
 ```
 
 ## API reference
@@ -64,7 +64,6 @@ npx junit-to-ctrf "test-results/**/*.xml"
 `-u`, `--use-suite-name` <useSuiteName>: Use suite name in the test name, defaults to true.
 
 `-e`, `--env` <envProperties>: Environment properties to include in the CTRF report. Accepts multiple properties in the format KEY=value.
-
 
 ## Examples
 
