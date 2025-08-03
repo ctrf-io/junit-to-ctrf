@@ -115,6 +115,8 @@ npx junit-to-ctrf path/to/junit.xml -o path/to/output/ctrf-report.json -t Exampl
 
 ## API reference
 
+See [API reference](./docs) for more details.
+
 ## What is CTRF?
 
 CTRF is a universal JSON test report schema that addresses the lack of a standardized format for JSON test reports.
