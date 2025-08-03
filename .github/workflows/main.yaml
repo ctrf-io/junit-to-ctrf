@@ -17,11 +17,19 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build
-        run: npx tsc
+        run: npm run build
+      - name: Run tests
+        run: npm run test
+      - name: Run lint
+        run: npm run lint
+      - name: Run format
+        run: npm run format
+      - name: Run docs
+        run: npm run docs
       - name: Run against junit
-        run: npm run run:junit
+        run: npm run e2e:junit
       - name: Run against minitest
-        run: npm run run:minitest
+        run: npm run e2e:minitest
       - name: Run against surefire
         run: npm run run:surefire
       - name: Run against glob
