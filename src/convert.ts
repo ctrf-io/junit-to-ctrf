@@ -100,7 +100,7 @@ function convertToCTRFTest(
 export function createCTRFReport(
   testCases: JUnitTestCase[],
   toolName?: string,
-  envProps?: Record<string, any>,
+  envProps?: Record<string, string>,
   useSuiteName?: boolean,
 ): Report {
   const ctrfTests = testCases.map((testCase) =>

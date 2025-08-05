@@ -1,8 +1,8 @@
-[**JUnit to CTRF v0.0.10-next.0**](../README.md)
+[**Junit CTRF Test Reporter v0.0.10-next.2**](../README.md)
 
----
+***
 
-[JUnit to CTRF](../globals.md) / ConvertOptions
+[Junit CTRF Test Reporter](../globals.md) / ConvertOptions
 
 # Interface: ConvertOptions
 
@@ -18,7 +18,7 @@ Options for the conversion
 
 Defined in: [convert.ts:13](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L13)
 
----
+***
 
 ### log?
 
@@ -26,7 +26,7 @@ Defined in: [convert.ts:13](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 Defined in: [convert.ts:15](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L15)
 
----
+***
 
 ### outputPath?
 
@@ -34,7 +34,7 @@ Defined in: [convert.ts:15](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 Defined in: [convert.ts:11](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L11)
 
----
+***
 
 ### toolName?
 
@@ -42,7 +42,7 @@ Defined in: [convert.ts:11](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 Defined in: [convert.ts:12](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L12)
 
----
+***
 
 ### useSuiteName?
 

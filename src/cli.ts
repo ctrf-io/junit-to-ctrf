@@ -4,7 +4,7 @@ import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { convertJUnitToCTRFReport } from "./convert.js";
 
-yargs(hideBin(process.argv))
+void yargs(hideBin(process.argv))
   .usage("Usage: $0 <junit.xml> [options]")
   .command(
     "$0 <pattern>",
@@ -51,8 +51,9 @@ yargs(hideBin(process.argv))
           log: true,
         });
         console.log("Conversion completed successfully.");
-      } catch (error: any) {
-        console.error("Error:", error.message);
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
+        console.error("Error:", message);
       }
     },
   )

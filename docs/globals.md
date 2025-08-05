@@ -1,8 +1,8 @@
-[**JUnit to CTRF v0.0.10-next.0**](README.md)
+[**Junit CTRF Test Reporter v0.0.10-next.2**](README.md)
 
----
+***
 
-# JUnit to CTRF v0.0.10-next.0
+# Junit CTRF Test Reporter v0.0.10-next.2
 
 ## Interfaces
 

@@ -9,8 +9,9 @@
   "categorizeByGroup": true,
   "categoryOrder": ["Methods", "*"],
   "readme": "README.md",
-  "theme": "default",
-  "name": "JUnit to CTRF",
+  "plugin": ["typedoc-plugin-markdown"],
+  "name": "Junit CTRF Test Reporter",
   "githubPages": false,
-  "gitRevision": "main"
+  "gitRevision": "main",
+  "cleanOutputDir": true
 }

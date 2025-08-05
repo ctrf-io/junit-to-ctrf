@@ -1,0 +1,87 @@
+{
+  "reportFormat": "CTRF",
+  "specVersion": "0.0.0",
+  "generatedBy": "junit-to-ctrf",
+  "timestamp": "2025-08-05T17:41:07.063Z",
+  "results": {
+    "tool": {
+      "name": "junit-to-ctrf"
+    },
+    "summary": {
+      "tests": 10,
+      "passed": 7,
+      "failed": 2,
+      "skipped": 1,
+      "pending": 0,
+      "other": 0,
+      "start": 0,
+      "stop": 0
+    },
+    "tests": [
+      {
+        "name": "com.example.UnitTests: testAddition",
+        "status": "passed",
+        "duration": 15,
+        "suite": "com.example.UnitTests"
+      },
+      {
+        "name": "com.example.UnitTests: testSubtraction",
+        "status": "passed",
+        "duration": 10,
+        "suite": "com.example.UnitTests"
+      },
+      {
+        "name": "com.example.UnitTests: testMultiplication",
+        "status": "failed",
+        "duration": 20,
+        "message": "Expected 10 but was 9",
+        "trace": "\n        Stack trace details...\n      ",
+        "suite": "com.example.UnitTests"
+      },
+      {
+        "name": "com.example.UnitTests: testDivision",
+        "status": "skipped",
+        "duration": 0,
+        "suite": "com.example.UnitTests"
+      },
+      {
+        "name": "com.example.UnitTests: testModulo",
+        "status": "failed",
+        "duration": 5,
+        "message": "NullPointerException occurred",
+        "trace": "\n        Stack trace details...\n      ",
+        "suite": "com.example.UnitTests"
+      },
+      {
+        "name": "com.example.UnitTests: testSquareRoot",
+        "status": "passed",
+        "duration": 300,
+        "suite": "com.example.UnitTests"
+      },
+      {
+        "name": "com.example.IntegrationTests: testUserLogin",
+        "status": "passed",
+        "duration": 400,
+        "suite": "com.example.IntegrationTests"
+      },
+      {
+        "name": "com.example.IntegrationTests: testUserRegistration",
+        "status": "passed",
+        "duration": 300,
+        "suite": "com.example.IntegrationTests"
+      },
+      {
+        "name": "com.example.IntegrationTests: testProductSearch",
+        "status": "passed",
+        "duration": 200,
+        "suite": "com.example.IntegrationTests"
+      },
+      {
+        "name": "com.example.IntegrationTests: testCheckoutProcess",
+        "status": "passed",
+        "duration": 300,
+        "suite": "com.example.IntegrationTests"
+      }
+    ]
+  }
+}

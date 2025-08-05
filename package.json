@@ -21,7 +21,7 @@
     "e2e:glob": "node dist/cli.js \"reports/*.xml\" --output reports/test-glob-ctrf.json",
     "docs": "typedoc",
     "docs:watch": "typedoc --watch",
-    "all": "npm run build:check && npm run test && npm run lint && npm run format"
+    "all": "npm run build:check && npm run test && npm run lint && npm run format && npm run docs && npm run build"
   },
   "bin": {
     "junit-to-ctrf": "./dist/cli.js"

@@ -47,8 +47,10 @@ export async function parseJUnitReport(
   const result = await xml2js.parseStringPromise(xml);
   const testCases: JUnitTestCase[] = [];
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const parseTestSuite = (suite: any, suiteName: string) => {
     if (suite.testcase) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       suite.testcase.forEach((testCase: any) => {
         const { classname, file, lineno, name, time } = testCase.$;
 
@@ -93,6 +95,7 @@ export async function parseJUnitReport(
       });
     }
     if (suite.testsuite) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       suite.testsuite.forEach((nestedSuite: any) => {
         const nestedSuiteName = nestedSuite.$.name || suiteName;
         parseTestSuite(nestedSuite, nestedSuiteName);
@@ -101,6 +104,7 @@ export async function parseJUnitReport(
   };
 
   if (result.testsuites && result.testsuites.testsuite) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     result.testsuites.testsuite.forEach((suite: any) => {
       const suiteName = suite.$.name;
       parseTestSuite(suite, suiteName);
