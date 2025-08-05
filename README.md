@@ -27,7 +27,11 @@ Explore more <a href="https://www.ctrf.io/integrations">integrations</a>
 </p>
 </div>
 
-## Installation
+## Usage
+
+This package can be used via the CLI or added as a dependency to your project.
+
+## Dependency
 
 ```sh
 npm install junit-to-ctrf@0.0.10-next.2
@@ -39,7 +43,7 @@ import { convertJUnitToCTRFReport } from "junit-to-ctrf";
 const report = await convertJUnitToCTRFReport("path/to/junit.xml");
 ```
 
-## API reference
+### API reference
 
 See [API reference](./docs) for more details.
 

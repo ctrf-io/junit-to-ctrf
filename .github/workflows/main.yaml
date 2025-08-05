@@ -37,7 +37,7 @@ jobs:
       - name: Publish Test Results
         uses: ctrf-io/github-test-reporter@v1
         with:
-          report-path: './ctrf/*.json'
+          report-path: "./ctrf/*.json"
           github-report: true
           failed-report: true
           flaky-report: true
@@ -50,4 +50,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: always()
-
