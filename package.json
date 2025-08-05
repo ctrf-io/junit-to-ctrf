@@ -31,7 +31,7 @@
     "README.md"
   ],
   "author": "Matthew Thomas",
-  "repository": "github:ctrf-io/playwright-ctrf-json-report",
+  "repository": "github:ctrf-io/junit-to-ctrf",
   "homepage": "https://ctrf.io",
   "license": "MIT",
   "dependencies": {
