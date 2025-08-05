@@ -30,7 +30,7 @@ Explore more <a href="https://www.ctrf.io/integrations">integrations</a>
 ## Installation
 
 ```sh
-npm install junit-to-ctrf@0.0.10-next.1
+npm install junit-to-ctrf@0.0.10-next.2
 ```
 
 ```ts
@@ -112,10 +112,6 @@ Combine all options in a single command:
 ```sh
 npx junit-to-ctrf path/to/junit.xml -o path/to/output/ctrf-report.json -t ExampleTool -e appName=MyApp buildName=MyBuild
 ```
-
-## API reference
-
-See [API reference](./docs) for more details.
 
 ## What is CTRF?
 
