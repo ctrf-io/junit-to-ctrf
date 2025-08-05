@@ -2,7 +2,7 @@
 
 ***
 
-[Junit CTRF Test Reporter](../globals.md) / convertJUnitToCTRFReport
+[Junit CTRF Test Reporter](../README.md) / convertJUnitToCTRFReport
 
 # Function: convertJUnitToCTRFReport()
 

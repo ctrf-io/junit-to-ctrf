@@ -2,7 +2,7 @@
 
 ***
 
-[Junit CTRF Test Reporter](../globals.md) / ConvertOptions
+[Junit CTRF Test Reporter](../README.md) / ConvertOptions
 
 # Interface: ConvertOptions
 

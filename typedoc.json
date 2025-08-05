@@ -8,7 +8,7 @@
   "includeVersion": true,
   "categorizeByGroup": true,
   "categoryOrder": ["Methods", "*"],
-  "readme": "README.md",
+  "readme": "none",
   "plugin": ["typedoc-plugin-markdown"],
   "name": "Junit CTRF Test Reporter",
   "githubPages": false,
