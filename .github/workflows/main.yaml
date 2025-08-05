@@ -31,6 +31,19 @@ jobs:
       - name: Run against minitest
         run: npm run e2e:minitest
       - name: Run against surefire
-        run: npm run run:surefire
+        run: npm run e2e:surefire
       - name: Run against glob
-        run: npm run run:glob
+        run: npm run e2e:glob
+      - name: Publish Test Results
+        uses: ctrf-io/github-test-reporter@v1
+        with:
+          report-path: './ctrf/*.json'
+          github-report: true
+          failed-report: true
+          flaky-report: true
+          insights-report: true
+          fail-rate-report: true
+          flaky-rate-report: true
+          slowest-report: true
+          previous-results-report: true
+          upload-artifact: true
