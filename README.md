@@ -49,6 +49,15 @@ const report = await convertJUnitToCTRFReport("path/to/junit.xml");
 
 See [API reference](./docs) for more details.
 
+## Supported JUnit Types
+
+This package supports the following JUnit XML formats:
+
+- **Standard JUnit XML**: Traditional JUnit XML format produced by most testing frameworks
+- **Maven Surefire**: JUnit XML format including test retries and flaky test detection
+
+Automatically detects the format based on the XML structure.
+
 ## CLI Usage
 
 ```sh
