@@ -1,7 +1,31 @@
 import fs from 'fs-extra'
 import xml2js from 'xml2js'
 import { glob } from 'glob'
-import type { JUnitTestCase } from '../types/junit.js'
+import type { JUnitTestCase, JUnitRetryAttempt } from '../types/junit.js'
+
+/**
+ * Parse retry attempts from flaky or rerun elements
+ * @param elements - Array of flaky failure/error or rerun failure/error elements
+ * @returns Array of JUnitRetryAttempt objects
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseRetryAttempts(elements: any[]): JUnitRetryAttempt[] {
+  return elements.map(element => {
+    const message = element.$?.message || ''
+    const type = element.$?.type || ''
+    const trace = element._ || element.stackTrace?.[0] || ''
+    const systemOut = element['system-out']?.[0] || ''
+    const systemErr = element['system-err']?.[0] || ''
+
+    return {
+      message,
+      type,
+      trace,
+      systemOut,
+      systemErr,
+    }
+  })
+}
 
 /**
  * Read JUnit report files matching a glob pattern
@@ -75,6 +99,23 @@ export async function parseJUnitReport(
           : undefined
 
         const skipped = testCase.skipped !== undefined
+
+        const flakyFailures = testCase.flakyFailure
+          ? parseRetryAttempts(testCase.flakyFailure)
+          : []
+        const flakyErrors = testCase.flakyError
+          ? parseRetryAttempts(testCase.flakyError)
+          : []
+        const rerunFailures = testCase.rerunFailure
+          ? parseRetryAttempts(testCase.rerunFailure)
+          : []
+        const rerunErrors = testCase.rerunError
+          ? parseRetryAttempts(testCase.rerunError)
+          : []
+
+        const systemOut = testCase['system-out']?.[0] || ''
+        const systemErr = testCase['system-err']?.[0] || ''
+
         testCases.push({
           suite: suiteName,
           classname,
@@ -91,6 +132,12 @@ export async function parseJUnitReport(
           errorMessage,
           errorType,
           skipped,
+          flakyFailures: flakyFailures.length > 0 ? flakyFailures : undefined,
+          flakyErrors: flakyErrors.length > 0 ? flakyErrors : undefined,
+          rerunFailures: rerunFailures.length > 0 ? rerunFailures : undefined,
+          rerunErrors: rerunErrors.length > 0 ? rerunErrors : undefined,
+          systemOut: systemOut || undefined,
+          systemErr: systemErr || undefined,
         })
       })
     }

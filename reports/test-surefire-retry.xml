@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+  This is a Maven Surefire JUnit XML report example for a test method
+  that fails in all its re-runs (using rerunFailingTestsCount - https://maven.apache.org/surefire/maven-surefire-plugin/examples/rerun-failing-tests.html). 
+
+  Key points:
+  1. The <failure> element contains information about the first failing run,
+     including stack trace, system-out, and system-err. This first failing run
+     is considered the "actual result" of the test.
+  2. Each subsequent failing re-run is represented using <rerunFailure> or <rerunError>,
+     which include their own stackTrace, system-out, and system-err.
+     The order of these elements corresponds to the retry sequence:
+       - The first <rerunFailure> is the first retry (attempt 2 overall)
+       - The second <rerunError> is the second retry (attempt 3 overall), and so on.
+  3. The <testcase> time attribute corresponds only to the first failing run.
+  4. No <flakyFailure> is used because the test never passes.
+  5. You can identify which attempt a <rerunFailure> or <rerunError> represents
+     by its position in the XML and/or by examining its system-out/system-err logs.
+-->
+
+<testsuite name="com.example.MyTest" tests="1" failures="1" errors="0" skipped="0" time="0.123">
+    <testcase classname="com.example.MyTest" name="testFlakyFeature" time="0.123">
+
+        <!-- First failing run -->
+        <failure message="expected true but was false" type="java.lang.AssertionError">
+            <![CDATA[java.lang.AssertionError: expected true but was false
+	at com.example.MyTest.testFlakyFeature(MyTest.java:42)]]>
+        </failure>
+        <system-out>
+            <![CDATA[Run 1 output: Starting testFlakyFeature...
+Run 1 ended with failure.]]>
+        </system-out>
+        <system-err>
+            <![CDATA[Run 1 error: java.lang.AssertionError at line 42]]>
+        </system-err>
+
+        <!-- Second failing re-run (rerunFailure) -->
+        <rerunFailure message="expected true but was false" type="java.lang.AssertionError">
+            <stackTrace>
+                <![CDATA[java.lang.AssertionError: expected true but was false
+	at com.example.MyTest.testFlakyFeature(MyTest.java:42)]]>
+            </stackTrace>
+            <system-out>
+                <![CDATA[Run 2 output: Retrying testFlakyFeature...
+Run 2 ended with failure.]]>
+            </system-out>
+            <system-err>
+                <![CDATA[Run 2 error: java.lang.AssertionError at line 42]]>
+            </system-err>
+        </rerunFailure>
+
+        <!-- Third failing re-run (rerunError) -->
+        <rerunError message="NullPointerException occurred" type="java.lang.NullPointerException">
+            <stackTrace>
+                <![CDATA[java.lang.NullPointerException
+	at com.example.MyTest.testFlakyFeature(MyTest.java:45)]]>
+            </stackTrace>
+            <system-out>
+                <![CDATA[Run 3 output: Retrying testFlakyFeature...
+Run 3 ended with error.]]>
+            </system-out>
+            <system-err>
+                <![CDATA[Run 3 error: java.lang.NullPointerException at line 45]]>
+            </system-err>
+        </rerunError>
+
+    </testcase>
+</testsuite>

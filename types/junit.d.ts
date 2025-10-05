@@ -1,3 +1,11 @@
+export interface JUnitRetryAttempt {
+  message?: string
+  type?: string
+  trace?: string
+  systemOut?: string
+  systemErr?: string
+}
+
 export interface JUnitTestCase {
   suite: string
   classname: string
@@ -14,4 +22,10 @@ export interface JUnitTestCase {
   file?: string
   lineno?: string
   skipped?: boolean
+  flakyFailures?: JUnitRetryAttempt[]
+  flakyErrors?: JUnitRetryAttempt[]
+  rerunFailures?: JUnitRetryAttempt[]
+  rerunErrors?: JUnitRetryAttempt[]
+  systemOut?: string
+  systemErr?: string
 }
