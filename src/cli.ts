@@ -1,21 +1,22 @@
 #!/usr/bin/env node
 
-import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
-import { convertJUnitToCTRFReport } from './convert';
+import yargs from 'yargs'
+import { hideBin } from 'yargs/helpers'
+import { convertJUnitToCTRFReport } from './convert.js'
 
-yargs(hideBin(process.argv))
+void yargs(hideBin(process.argv))
   .usage('Usage: $0 <junit.xml> [options]')
   .command(
     '$0 <pattern>',
     'Convert JUnit XML report(s) to CTRF',
-    (yargs) => {
+    yargs => {
       return yargs
-      .positional('pattern', {
-        describe: 'Glob pattern to match JUnit XML files (e.g., "test-results/**/*.xml")',
-        type: 'string',
-        demandOption: true,
-      })
+        .positional('pattern', {
+          describe:
+            'Glob pattern to match JUnit XML files (e.g., "test-results/**/*.xml")',
+          type: 'string',
+          demandOption: true,
+        })
         .option('output', {
           alias: 'o',
           type: 'string',
@@ -37,17 +38,23 @@ yargs(hideBin(process.argv))
           type: 'boolean',
           default: true,
           description: 'Use suite name in the test name',
-        });
+        })
     },
-    async (argv) => {
+    async argv => {
       try {
-        const { pattern, output, tool, env, useSuiteName  } = argv;
-        await convertJUnitToCTRFReport(pattern as string, { outputPath: output as string, toolName: tool as string, envProps: env as string[], useSuiteName: useSuiteName as boolean, log: true });
-        console.log('Conversion completed successfully.');
-      } catch (error: any) {
-        console.error('Error:', error.message);
+        const { pattern, output, tool, env, useSuiteName } = argv
+        await convertJUnitToCTRFReport(pattern as string, {
+          outputPath: output as string,
+          toolName: tool as string,
+          envProps: env as string[],
+          useSuiteName: useSuiteName as boolean,
+          log: true,
+        })
+        console.log('Conversion completed successfully.')
+      } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
+        console.error('Error:', message)
       }
     }
   )
-  .help()
-  .argv;
+  .help().argv

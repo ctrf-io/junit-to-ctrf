@@ -2,7 +2,7 @@
 
 > Convert JUnit reports to CTRF reports
 
-This package is useful if there isn't a CTRF reporter available for your test framework.
+This package is useful if there isn't a CTRF reporter available for your test framework. It can be used via the CLI or added as a dependency to your project.
 
 <div align="center">
 <div style="padding: 1.5rem; border-radius: 8px; margin: 1rem 0; border: 1px solid #30363d;">
@@ -29,6 +29,26 @@ Explore more <a href="https://www.ctrf.io/integrations">integrations</a>
 
 ## Usage
 
+This package can be used via the CLI or added as a dependency to your project.
+
+## Dependency
+
+```sh
+npm install junit-to-ctrf@0.0.10-next.2
+```
+
+```ts
+import { convertJUnitToCTRFReport } from "junit-to-ctrf";
+
+const report = await convertJUnitToCTRFReport("path/to/junit.xml");
+```
+
+### API reference
+
+See [API reference](./docs) for more details.
+
+## CLI Usage
+
 ```sh
 npx junit-to-ctrf path/to/junit.xml
 ```
@@ -48,7 +68,6 @@ npx junit-to-ctrf "test-results/**/*.xml"
 `-u`, `--use-suite-name` <useSuiteName>: Use suite name in the test name, defaults to true.
 
 `-e`, `--env` <envProperties>: Environment properties to include in the CTRF report. Accepts multiple properties in the format KEY=value.
-
 
 ## Examples
 

@@ -3,26 +3,50 @@ name: Build
 on:
   push:
     branches:
-      - '**'
+      - "**"
   pull_request:
     branches:
-      - '**'
+      - "**"
 
 jobs:
   testing:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    - name: Install dependencies
-      run: npm install
-    - name: Build
-      run: npx tsc
-    - name: Run against junit
-      run: npm run run:junit
-    - name: Run against minitest
-      run: npm run run:minitest
-    - name: Run against surefire
-      run: npm run run:surefire
-    - name: Run against glob
-      run: npm run run:glob
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - name: Run tests
+        run: npm run test
+      - name: Run lint
+        run: npm run lint
+      - name: Run format
+        run: npm run format
+      - name: Run docs
+        run: npm run docs
+      - name: Run against junit
+        run: npm run e2e:junit
+      - name: Run against minitest
+        run: npm run e2e:minitest
+      - name: Run against surefire
+        run: npm run e2e:surefire
+      - name: Run against glob
+        run: npm run e2e:glob
+      - name: Publish Test Results
+        uses: ctrf-io/github-test-reporter@v1
+        with:
+          report-path: "./ctrf/*.json"
+          github-report: true
+          failed-report: true
+          flaky-report: true
+          insights-report: true
+          fail-rate-report: true
+          flaky-rate-report: true
+          slowest-report: true
+          previous-results-report: true
+          upload-artifact: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: always()

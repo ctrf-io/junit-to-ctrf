@@ -1,17 +1,27 @@
 {
   "name": "junit-to-ctrf",
-  "version": "0.0.9",
+  "version": "0.0.10-next.2",
   "description": "Convert JUnit XML reports to CTRF JSON",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npx tsc",
-    "run:junit": "node dist/cli.js reports/test-junit.xml --output reports/test-junit-ctrf.json",
-    "run:minitest": "node dist/cli.js reports/test-minitest-junit.xml --output reports/test-minitest-junit-ctrf.json",
-    "run:surefire": "node dist/cli.js reports/test-surefire.xml --output reports/test-surefire-ctrf.json", 
-    "run:glob": "node dist/cli.js \"reports/*.xml\" --output reports/test-glob-ctrf.json",
-    "test": "jest",
-    "test:e2e": "jest --config jest.config.js"
+    "build": "tsc -p .",
+    "build:check": "tsc -p . -noEmit",
+    "build:watch": "tsc -p . --watch",
+    "clean": "rm -rf dist && rm -rf coverage && rm -rf ctrf",
+    "test": "vitest run",
+    "lint": "eslint . --ext .ts --fix",
+    "lint:check": "eslint . --ext .ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "e2e:junit": "node dist/cli.js reports/test-junit.xml --output reports/test-junit-ctrf.json",
+    "e2e:minitest": "node dist/cli.js reports/test-minitest-junit.xml --output reports/test-minitest-junit-ctrf.json",
+    "e2e:surefire": "node dist/cli.js reports/test-surefire.xml --output reports/test-surefire-ctrf.json",
+    "e2e:glob": "node dist/cli.js \"reports/*.xml\" --output reports/test-glob-ctrf.json",
+    "docs": "typedoc",
+    "docs:watch": "typedoc --watch",
+    "all": "npm run build:check && npm run test && npm run lint && npm run format && npm run docs && npm run build"
   },
   "bin": {
     "junit-to-ctrf": "./dist/cli.js"
@@ -21,22 +31,30 @@
     "README.md"
   ],
   "author": "Matthew Thomas",
-  "repository": "github:ctrf-io/playwright-ctrf-json-report",
+  "repository": "github:ctrf-io/junit-to-ctrf",
   "homepage": "https://ctrf.io",
   "license": "MIT",
   "dependencies": {
-    "ctrf": "^0.0.12",
-    "fs-extra": "^11.2.0",
-    "glob": "^11.0.1",
-    "typescript": "^5.4.5",
+    "ctrf": "^0.0.13-next.2",
+    "fs-extra": "^11.3.0",
+    "glob": "^11.0.3",
+    "typescript": "^5.8.3",
     "xml2js": "^0.6.2",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.12.7",
+    "@types/node": "^24.1.0",
     "@types/xml2js": "^0.4.14",
     "@types/yargs": "^17.0.32",
-    "typescript": "^5.4.5"
+    "@eslint/js": "^9.32.0",
+    "eslint": "^9.32.0",
+    "typescript-eslint": "^8.38.0",
+    "typedoc": "^0.28.9",
+    "typedoc-plugin-markdown": "^4.8.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
+    "@d2t/vitest-ctrf-json-reporter": "^1.2.0",
+    "prettier": "^3.5.3"
   }
 }
