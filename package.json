@@ -1,6 +1,6 @@
 {
   "name": "junit-to-ctrf",
-  "version": "0.0.10-next.2",
+  "version": "0.0.10",
   "description": "Convert JUnit XML reports to CTRF JSON",
   "type": "module",
   "main": "dist/index.js",
@@ -19,6 +19,8 @@
     "e2e:minitest": "node dist/cli.js reports/test-minitest-junit.xml --output reports/test-minitest-junit-ctrf.json",
     "e2e:surefire": "node dist/cli.js reports/test-surefire.xml --output reports/test-surefire-ctrf.json",
     "e2e:glob": "node dist/cli.js \"reports/*.xml\" --output reports/test-glob-ctrf.json",
+    "e2e:surefire-flaky": "node dist/cli.js reports/test-surefire-flaky.xml --output reports/test-surefire-flaky-ctrf.json",
+    "e2e:surefire-retry": "node dist/cli.js reports/test-surefire-retry.xml --output reports/test-surefire-retry-ctrf.json",
     "docs": "typedoc",
     "docs:watch": "typedoc --watch",
     "all": "npm run build:check && npm run test && npm run lint && npm run format && npm run docs && npm run build"

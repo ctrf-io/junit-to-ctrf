@@ -1,6 +1,6 @@
 import fs from 'fs-extra'
-import type { Report, Test, Tool } from 'ctrf'
-import type { JUnitTestCase } from '../types/junit.js'
+import type { Report, Test, Tool, RetryAttempt } from 'ctrf'
+import type { JUnitTestCase, JUnitRetryAttempt } from '../types/junit.js'
 import { readJUnitReportsFromGlob } from './read.js'
 import path from 'path'
 
@@ -61,21 +61,146 @@ export async function convertJUnitToCTRFReport(
   return ctrfReport
 }
 
+/**
+ * Convert JUnit output string to CTRF stdout/stderr array
+ * Splits on newlines and filters out empty lines for cleaner output
+ * @param output - Raw output string from JUnit
+ * @returns Array of non-empty output lines
+ */
+function convertOutputToArray(
+  output: string | undefined
+): string[] | undefined {
+  if (!output || output.trim() === '') {
+    return undefined
+  }
+
+  return output
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0)
+}
+
+/**
+ * Convert JUnit retry attempts to CTRF retry attempts
+ * @param retryAttempts - Array of JUnit retry attempts
+ * @param startAttempt - Starting attempt number
+ * @returns Array of CTRF RetryAttempt objects
+ */
+function convertRetryAttempts(
+  retryAttempts: JUnitRetryAttempt[],
+  startAttempt: number
+): RetryAttempt[] {
+  return retryAttempts.map((attempt, index) => {
+    const retryAttempt: RetryAttempt = {
+      attempt: startAttempt + index,
+      status: 'failed' as const,
+      message: attempt.message,
+      trace: attempt.trace,
+    }
+
+    const stdout = convertOutputToArray(attempt.systemOut)
+    const stderr = convertOutputToArray(attempt.systemErr)
+
+    if (stdout) {
+      retryAttempt.stdout = stdout
+    }
+    if (stderr) {
+      retryAttempt.stderr = stderr
+    }
+
+    return retryAttempt
+  })
+}
+
+/**
+ * Process a JUnit test case and extract retry information to determine final test status
+ * @param testCase - JUnit test case with potential retry information
+ * @returns Object containing test information including retry details and final status
+ */
+function processTestWithRetries(testCase: JUnitTestCase): {
+  retryAttempts: RetryAttempt[]
+  retryCount: number
+  finalStatus: Test['status']
+  isFlaky: boolean
+} {
+  const retryAttempts: RetryAttempt[] = []
+  let attemptNumber = 1
+
+  if (testCase.flakyFailures && testCase.flakyFailures.length > 0) {
+    retryAttempts.push(
+      ...convertRetryAttempts(testCase.flakyFailures, attemptNumber)
+    )
+    attemptNumber += testCase.flakyFailures.length
+  }
+
+  if (testCase.flakyErrors && testCase.flakyErrors.length > 0) {
+    retryAttempts.push(
+      ...convertRetryAttempts(testCase.flakyErrors, attemptNumber)
+    )
+    attemptNumber += testCase.flakyErrors.length
+  }
+
+  const hasFlaky =
+    (testCase.flakyFailures && testCase.flakyFailures.length > 0) ||
+    (testCase.flakyErrors && testCase.flakyErrors.length > 0)
+
+  if (!hasFlaky) {
+    attemptNumber = 2
+  }
+
+  if (testCase.rerunFailures && testCase.rerunFailures.length > 0) {
+    retryAttempts.push(
+      ...convertRetryAttempts(testCase.rerunFailures, attemptNumber)
+    )
+    attemptNumber += testCase.rerunFailures.length
+  }
+
+  if (testCase.rerunErrors && testCase.rerunErrors.length > 0) {
+    retryAttempts.push(
+      ...convertRetryAttempts(testCase.rerunErrors, attemptNumber)
+    )
+    attemptNumber += testCase.rerunErrors.length
+  }
+
+  const hasRerun =
+    (testCase.rerunFailures && testCase.rerunFailures.length > 0) ||
+    (testCase.rerunErrors && testCase.rerunErrors.length > 0)
+
+  let finalStatus: Test['status']
+
+  if (hasFlaky) {
+    finalStatus = 'passed'
+  } else if (hasRerun) {
+    if (testCase.hasError) {
+      finalStatus = 'failed'
+    } else if (testCase.hasFailure) {
+      finalStatus = 'failed'
+    } else {
+      finalStatus = 'failed'
+    }
+  } else {
+    if (testCase.hasFailure || testCase.hasError) {
+      finalStatus = 'failed'
+    } else if (testCase.skipped) {
+      finalStatus = 'skipped'
+    } else {
+      finalStatus = 'passed'
+    }
+  }
+
+  return {
+    retryAttempts,
+    retryCount: retryAttempts.length,
+    finalStatus,
+    isFlaky: !!hasFlaky,
+  }
+}
+
 function convertToCTRFTest(
   testCase: JUnitTestCase,
   useSuiteName: boolean
 ): Test {
-  let status: Test['status'] = 'other'
-
-  if (testCase.hasFailure) {
-    status = 'failed'
-  } else if (testCase.hasError) {
-    status = 'failed'
-  } else if (testCase.skipped) {
-    status = 'skipped'
-  } else {
-    status = 'passed'
-  }
+  const testInfo = processTestWithRetries(testCase)
 
   const durationMs = Math.round(parseFloat(testCase.time || '0') * 1000)
 
@@ -85,9 +210,9 @@ function convertToCTRFTest(
 
   const line = testCase.lineno ? parseInt(testCase.lineno) : undefined
 
-  return {
+  const test: Test = {
     name: testName,
-    status,
+    status: testInfo.finalStatus,
     duration: durationMs,
     filePath: testCase.file,
     line: line,
@@ -95,6 +220,27 @@ function convertToCTRFTest(
     trace: testCase.failureTrace || testCase.errorTrace || undefined,
     suite: testCase.suite || '',
   }
+
+  if (testInfo.retryCount > 0) {
+    test.retries = testInfo.retryCount
+    test.retryAttempts = testInfo.retryAttempts
+  }
+
+  if (testInfo.isFlaky) {
+    test.flaky = true
+  }
+
+  const stdout = convertOutputToArray(testCase.systemOut)
+  const stderr = convertOutputToArray(testCase.systemErr)
+
+  if (stdout) {
+    test.stdout = stdout
+  }
+  if (stderr) {
+    test.stderr = stderr
+  }
+
+  return test
 }
 
 export function createCTRFReport(
@@ -111,6 +257,7 @@ export function createCTRFReport(
   const skipped = ctrfTests.filter(test => test.status === 'skipped').length
   const pending = ctrfTests.filter(test => test.status === 'pending').length
   const other = ctrfTests.filter(test => test.status === 'other').length
+  const flaky = ctrfTests.filter(test => test.flaky === true).length
 
   const summary = {
     tests: ctrfTests.length,
@@ -121,6 +268,7 @@ export function createCTRFReport(
     other,
     start: 0,
     stop: 0,
+    ...(flaky > 0 && { flaky }),
   }
 
   const tool: Tool = {

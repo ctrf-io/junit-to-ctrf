@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+  This is a Maven Surefire JUnit XML report example for a test method
+  that initially fails in some runs but eventually passes (using rerunFailingTestsCount - https://maven.apache.org/surefire/maven-surefire-plugin/examples/rerun-failing-tests.html).
+
+  Key points:
+  1. The <flakyFailure> elements contain information about the failed runs
+     that were retried but eventually passed. Each includes its own
+     stack trace, system-out, and system-err for that attempt.
+  2. The order of <flakyFailure> elements corresponds to the retry sequence:
+       - The first <flakyFailure> is the first failing attempt (attempt 1 overall)
+       - The second <flakyFailure> is the second failing attempt (attempt 2 overall), and so on.
+  3. The final successful run is represented by the top-level <system-out> and <system-err> under <testcase>.
+  4. The <testcase> time attribute represents the **total duration** of all runs (failed + successful).
+  5. No <failure> or <rerunFailure>/<rerunError> elements are used because the test eventually passed.
+  6. You can identify the sequence of attempts by the order of <flakyFailure> elements and/or by inspecting system-out/system-err logs.
+-->
+
+<testsuite name="com.example.MyTest" tests="1" failures="0" errors="0" skipped="0" time="3.456">
+    <testcase classname="com.example.MyTest" name="testFlakyFeature" time="3.456">
+
+        <!-- First failed run -->
+        <flakyFailure message="Run 1 failed: expected true but was false">
+            <![CDATA[java.lang.AssertionError: expected true but was false
+	at com.example.MyTest.testFlakyFeature(MyTest.java:42)]]>
+            <system-out>
+                <![CDATA[Run 1 output: Starting testFlakyFeature...
+Some debug info...
+Run 1 ended with failure.]]>
+            </system-out>
+            <system-err>
+                <![CDATA[Run 1 error: java.lang.AssertionError at line 42]]>
+            </system-err>
+        </flakyFailure>
+
+        <!-- Second failed run -->
+        <flakyFailure message="Run 2 failed: expected true but was false">
+            <![CDATA[java.lang.AssertionError: expected true but was false
+	at com.example.MyTest.testFlakyFeature(MyTest.java:42)]]>
+            <system-out>
+                <![CDATA[Run 2 output: Retrying testFlakyFeature...
+Run 2 ended with failure.]]>
+            </system-out>
+            <system-err>
+                <![CDATA[Run 2 error: java.lang.AssertionError at line 42]]>
+            </system-err>
+        </flakyFailure>
+
+        <!-- Top-level output/err for the final successful run -->
+        <system-out>
+            <![CDATA[Run 3 output: Retrying testFlakyFeature...
+Test passed successfully.]]>
+        </system-out>
+        <system-err>
+            <![CDATA[]]>
+        </system-err>
+
+    </testcase>
+</testsuite>
