@@ -33,7 +33,19 @@ We’d love your feedback, <a href="https://app.formbricks.com/s/cmefs524mhlh1tl
 
 This package can be used via the CLI or added as a dependency to your project.
 
-## Dependency
+## CLI Usage
+
+```sh
+npx junit-to-ctrf path/to/junit.xml
+```
+
+or glob pattern:
+
+```sh
+npx junit-to-ctrf "test-results/**/*.xml"
+```
+
+## As a Dependency
 
 ```sh
 npm install junit-to-ctrf
@@ -58,19 +70,7 @@ This package supports the following JUnit XML formats:
 
 Automatically detects the format based on the XML structure.
 
-## CLI Usage
-
-```sh
-npx junit-to-ctrf path/to/junit.xml
-```
-
-or glob pattern:
-
-```sh
-npx junit-to-ctrf "test-results/**/*.xml"
-```
-
-## Options
+## CLI Options
 
 `-o`, `--output` <output>: Output directory and filename for the CTRF report. If not provided, defaults to ctrf/ctrf-report.json.
 
