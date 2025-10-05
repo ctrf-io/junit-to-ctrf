@@ -36,7 +36,7 @@ This package can be used via the CLI or added as a dependency to your project.
 ## Dependency
 
 ```sh
-npm install junit-to-ctrf@0.0.10-next.2
+npm install junit-to-ctrf
 ```
 
 ```ts

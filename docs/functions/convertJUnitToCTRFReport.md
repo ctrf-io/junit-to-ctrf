@@ -1,4 +1,4 @@
-[**Junit CTRF Test Reporter v0.0.10-next.2**](../README.md)
+[**Junit CTRF Test Reporter v0.0.10**](../README.md)
 
 ***
 
