@@ -91,6 +91,13 @@ function serializeCTRFReport(report: Report): string {
       console.error('Tool contains invalid data')
     }
 
+    try {
+      JSON.stringify(report.results.environment)
+      console.log('Environment serialization: OK')
+    } catch {
+      console.error('Environment contains invalid data')
+    }
+
     for (let i = 0; i < report.results.tests.length; i++) {
       try {
         JSON.stringify(report.results.tests[i])

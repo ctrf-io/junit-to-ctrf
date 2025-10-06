@@ -6,7 +6,6 @@
   - Unicode surrogate pairs and isolated surrogates
   - Strings with only whitespace that should become undefined
   - ANSI escape sequences embedded as literal characters in CDATA
-  
 -->
 <testsuites>
   <testsuite name="com.example.CalculatorTests" tests="5" failures="1" errors="1" skipped="1" time="0.456">
