@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+  This file contains PROBLEMATIC CHARACTERS that would break JSON serialization
+  without proper sanitization. These include:
+  - BOM (Byte Order Mark): ﻿ at start of strings
+  - Unicode surrogate pairs and isolated surrogates
+  - Strings with only whitespace that should become undefined
+  - ANSI escape sequences embedded as literal characters in CDATA
+-->
+<testsuites>
+  <testsuite name="com.example.CalculatorTests" tests="5" failures="1" errors="1" skipped="1" time="0.456">
+    <testcase name="addsNumbers" classname="com.example.CalculatorTests" time="0.012" file="CalculatorTests.java" lineno="23"/>
+
+    <testcase name="subtractsNumbers" classname="com.example.CalculatorTests" time="0.003">
+      <skipped/>
+    </testcase>
+
+    <testcase name="multipliesNumbers" classname="com.example.CalculatorTests" time="0.025">
+      <!-- Failure message contains: BOM at start -->
+      <failure message="﻿Expected 10 but was 9" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Expected 10 but was 9
+    at com.example.CalculatorTests.multipliesNumbers(CalculatorTests.java:45)
+Stack trace with ANSI colors: [31mRED[0m
+]]></failure>
+      <!-- System output contains: ANSI escape sequences -->
+      <system-out><![CDATA[[32mstdout line 1[0m
+stdout line 2]]></system-out>
+      <!-- System error contains: ANSI escape sequences -->
+      <system-err><![CDATA[stderr warns...[31mERROR[0m]]></system-err>
+    </testcase>
+
+    <!-- Test name contains: Unicode surrogate -->
+    <testcase name="dividesNumbers𝐀WithSurrogate" classname="com.example.CalculatorTests" time="0.100">
+      <!-- Error message contains: BOM at start -->
+      <error message="﻿java.lang.ArithmeticException: / by zero" type="java.lang.ArithmeticException"><![CDATA[java.lang.ArithmeticException: / by zero
+    at com.example.CalculatorTests.dividesNumbers(CalculatorTests.java:60)
+Error with whitespace only message follows
+]]></error>
+    </testcase>
+
+    <!-- Test name contains: whitespace only (should become undefined) -->
+    <testcase name="flakyThenPasses   " classname="com.example.CalculatorTests" time="0.200">
+      <!-- Flaky failure message contains: empty after sanitization -->
+      <flakyFailure message="   " type="org.opentest4j.AssertionFailedError"><![CDATA[intermittent failure stack
+at line...]]></flakyFailure>
+      <!-- Flaky error message contains: BOM -->
+      <flakyError message="﻿java.lang.RuntimeException" type="java.lang.RuntimeException"><![CDATA[some transient error]]></flakyError>
+      <!-- System output contains: ANSI escape sequences -->
+      <system-out><![CDATA[flaky test stdout[32mGREEN[0m]]></system-out>
+    </testcase>
+  </testsuite>
+
+  <!-- Suite name contains: BOM -->
+  <testsuite name="﻿com.example.RetryTests" tests="2" failures="0" errors="0" skipped="0" time="0.123">
+    <!-- Test name contains: isolated surrogate (will be replaced) -->
+    <testcase name="retriesThenFails�" classname="com.example.RetryTests" time="0.050">
+      <!-- Rerun failure message contains: BOM -->
+      <rerunFailure message="﻿AssertionError" type="org.opentest4j.AssertionFailedError"><![CDATA[first attempt fail]]></rerunFailure>
+      <!-- Rerun error message contains: BOM -->
+      <rerunError message="﻿java.lang.IllegalStateException" type="java.lang.IllegalStateException"><![CDATA[second attempt error]]></rerunError>
+    </testcase>
+
+    <!-- Clean test with no problematic characters -->
+    <testcase name="alwaysPasses" classname="com.example.RetryTests" time="0.010"/>
+  </testsuite>
+</testsuites>
