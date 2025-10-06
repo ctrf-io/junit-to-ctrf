@@ -21,6 +21,7 @@
     "e2e:glob": "node dist/cli.js \"reports/*.xml\" --output reports/test-glob-ctrf.json",
     "e2e:surefire-flaky": "node dist/cli.js reports/test-surefire-flaky.xml --output reports/test-surefire-flaky-ctrf.json",
     "e2e:surefire-retry": "node dist/cli.js reports/test-surefire-retry.xml --output reports/test-surefire-retry-ctrf.json",
+    "e2e:junit-problem-string": "node dist/cli.js reports/test-junit-problem-string.xml --output reports/test-junit-problem-string-ctrf.json",
     "docs": "typedoc",
     "docs:watch": "typedoc --watch",
     "all": "npm run build:check && npm run test && npm run lint && npm run format && npm run docs && npm run build"

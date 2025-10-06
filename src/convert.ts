@@ -55,17 +55,91 @@ export async function convertJUnitToCTRFReport(
     await fs.ensureDir(outputDir)
 
     if (options.log) console.log('Writing CTRF report to:', finalOutputPath)
-    await fs.outputJson(finalOutputPath, ctrfReport, { spaces: 2 })
+
+    const jsonString = serializeCTRFReport(ctrfReport)
+    await fs.writeFile(finalOutputPath, jsonString, 'utf-8')
+
     if (options.log) console.log(`CTRF report written to ${outputPath}`)
   }
   return ctrfReport
 }
 
 /**
+ * Safely serialize a CTRF report to JSON with detailed error diagnostics
+ * @param report - The CTRF report to serialize
+ * @returns JSON string representation of the report
+ * @throws Error with detailed diagnostics if serialization fails
+ */
+function serializeCTRFReport(report: Report): string {
+  try {
+    return JSON.stringify(report, null, 2)
+  } catch (error) {
+    console.error('Failed to serialize CTRF report to JSON:')
+    console.error(error instanceof Error ? error.message : String(error))
+
+    try {
+      JSON.stringify(report.results.summary)
+      console.log('Summary serialization: OK')
+    } catch {
+      console.error('Summary contains invalid data')
+    }
+
+    try {
+      JSON.stringify(report.results.tool)
+      console.log('Tool serialization: OK')
+    } catch {
+      console.error('Tool contains invalid data')
+    }
+
+    for (let i = 0; i < report.results.tests.length; i++) {
+      try {
+        JSON.stringify(report.results.tests[i])
+      } catch {
+        console.error(
+          `Test at index ${i} contains invalid data:`,
+          report.results.tests[i].name
+        )
+      }
+    }
+
+    throw error
+  }
+}
+
+/**
+ * Sanitize a string to ensure it's valid for JSON serialization
+ * Removes or escapes problematic characters that could break JSON parsing
+ * @param str - String to sanitize
+ * @returns Sanitized string safe for JSON
+ */
+export function sanitizeString(str?: string): string | undefined {
+  if (str == null) return undefined
+
+  let s = str
+  // Remove BOM if present
+  s = s.replace(/\uFEFF/g, '')
+  // Replace control chars except \n, \r, \t and remove DEL
+  // eslint-disable-next-line no-control-regex
+  s = s.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, ' ')
+  // Replace isolated surrogate halves with replacement char
+  s = s.replace(/[\uD800-\uDFFF]/g, '�')
+  // Normalize Unicode to NFC
+  try {
+    s = s.normalize('NFC')
+  } catch {
+    // Ignore if normalization fails
+  }
+
+  if (/^\s*$/.test(s)) return undefined
+
+  return s
+}
+
+/**
  * Convert JUnit output string to CTRF stdout/stderr array
- * Splits on newlines and filters out empty lines for cleaner output
+ * Splits on newlines, sanitizes each line, and filters out empty lines for cleaner output
  * @param output - Raw output string from JUnit
- * @returns Array of non-empty output lines
+ * @returns Array of non-empty sanitized output lines
  */
 function convertOutputToArray(
   output: string | undefined
@@ -76,8 +150,8 @@ function convertOutputToArray(
 
   return output
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0)
+    .map(line => sanitizeString(line.trim()))
+    .filter(line => line && line.length > 0) as string[]
 }
 
 /**
@@ -94,8 +168,8 @@ function convertRetryAttempts(
     const retryAttempt: RetryAttempt = {
       attempt: startAttempt + index,
       status: 'failed' as const,
-      message: attempt.message,
-      trace: attempt.trace,
+      message: sanitizeString(attempt.message),
+      trace: sanitizeString(attempt.trace),
     }
 
     const stdout = convertOutputToArray(attempt.systemOut)
@@ -205,20 +279,23 @@ function convertToCTRFTest(
   const durationMs = Math.round(parseFloat(testCase.time || '0') * 1000)
 
   const testName = useSuiteName
-    ? `${testCase.suite}: ${testCase.name}`
-    : testCase.name
+    ? `${sanitizeString(testCase.suite)}: ${sanitizeString(testCase.name)}`
+    : sanitizeString(testCase.name)
 
   const line = testCase.lineno ? parseInt(testCase.lineno) : undefined
 
   const test: Test = {
-    name: testName,
+    name: testName || 'Unnamed Test',
     status: testInfo.finalStatus,
     duration: durationMs,
     filePath: testCase.file,
     line: line,
-    message: testCase.failureMessage || testCase.errorMessage || undefined,
-    trace: testCase.failureTrace || testCase.errorTrace || undefined,
-    suite: testCase.suite || '',
+    message:
+      sanitizeString(testCase.failureMessage || testCase.errorMessage) ||
+      undefined,
+    trace:
+      sanitizeString(testCase.failureTrace || testCase.errorTrace) || undefined,
+    suite: sanitizeString(testCase.suite),
   }
 
   if (testInfo.retryCount > 0) {
