@@ -24,7 +24,7 @@ This package is useful if there isn't a CTRF reporter available for your test fr
 
 Contributions are very welcome! <br/>
 Explore more <a href="https://www.ctrf.io/integrations">integrations</a> <br/>
-We’d love your feedback, <a href="https://app.formbricks.com/s/cmefs524mhlh1tl01gkpvefrb">share it anonymously</a>.
+<a href="https://app.formbricks.com/s/cmefs524mhlh1tl01gkpvefrb">Let us know your thoughts</a>.
 
 </p>
 </div>
