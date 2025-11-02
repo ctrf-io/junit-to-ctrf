@@ -285,6 +285,15 @@ function convertToCTRFTest(
 
   const durationMs = Math.round(parseFloat(testCase.time || '0') * 1000)
 
+  const suiteAsArray: string[] = []
+  const suite = sanitizeString(testCase.suite)
+
+  if (testCase.suite !== undefined) {
+    if (suite !== undefined) {
+      suiteAsArray.push(suite)
+    }
+  }
+
   const testName = useSuiteName
     ? `${sanitizeString(testCase.suite)}: ${sanitizeString(testCase.name)}`
     : sanitizeString(testCase.name)
@@ -302,7 +311,7 @@ function convertToCTRFTest(
       undefined,
     trace:
       sanitizeString(testCase.failureTrace || testCase.errorTrace) || undefined,
-    suite: sanitizeString(testCase.suite),
+    suite: suiteAsArray,
   }
 
   if (testInfo.retryCount > 0) {

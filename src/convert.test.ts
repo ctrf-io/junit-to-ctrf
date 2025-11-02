@@ -85,7 +85,7 @@ describe('createCTRFReport', () => {
             duration: 500,
             filePath: 'test1.js',
             line: 10,
-            suite: 'TestSuite1',
+            suite: ['TestSuite1'],
           }),
           expect.objectContaining({
             name: 'testFailed',
@@ -95,7 +95,7 @@ describe('createCTRFReport', () => {
             line: 15,
             message: 'Test failed',
             trace: 'Error: Test failed\n    at testFailed (test1.js:15:5)',
-            suite: 'TestSuite1',
+            suite: ['TestSuite1'],
           }),
           expect.objectContaining({
             name: 'testSkipped',
@@ -103,7 +103,7 @@ describe('createCTRFReport', () => {
             duration: 100,
             filePath: 'test2.js',
             line: 20,
-            suite: 'TestSuite2',
+            suite: ['TestSuite2'],
           }),
         ]),
       },
@@ -207,7 +207,7 @@ describe('createCTRFReport', () => {
         line: undefined,
         message: undefined,
         trace: undefined,
-        suite: 'TestSuite',
+        suite: ['TestSuite'],
       }),
     ])
   })
@@ -246,7 +246,7 @@ describe('createCTRFReport', () => {
         message: 'Cannot read property of undefined',
         trace:
           'TypeError: Cannot read property of undefined\n    at testWithError (test.js:25:10)',
-        suite: 'TestSuite',
+        suite: ['TestSuite'],
       }),
     ])
   })
