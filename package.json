@@ -49,7 +49,7 @@
   "homepage": "https://ctrf.io",
   "license": "MIT",
   "dependencies": {
-    "ctrf": "^0.0.17",
+    "ctrf": "^0.2.0",
     "fs-extra": "^11.3.0",
     "glob": "^11.0.3",
     "typescript": "^5.8.3",
