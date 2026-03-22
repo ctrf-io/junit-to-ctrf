@@ -1,5 +1,5 @@
 import fs from 'fs-extra'
-import type { Report, Test, Tool, RetryAttempt } from 'ctrf'
+import type { CTRFReport, Test, Tool, RetryAttempt } from 'ctrf'
 import type { JUnitTestCase, JUnitRetryAttempt } from '../types/junit.js'
 import { readJUnitReportsFromGlob } from './read.js'
 import path from 'path'
@@ -24,7 +24,7 @@ export interface ConvertOptions {
 export async function convertJUnitToCTRFReport(
   pattern: string,
   options: ConvertOptions = {}
-): Promise<Report | null> {
+): Promise<CTRFReport | null> {
   const { outputPath, toolName, envProps, useSuiteName } = options
   const testCases = await readJUnitReportsFromGlob(pattern, {
     log: options.log,
@@ -70,7 +70,7 @@ export async function convertJUnitToCTRFReport(
  * @returns JSON string representation of the report
  * @throws Error with detailed diagnostics if serialization fails
  */
-function serializeCTRFReport(report: Report): string {
+function serializeCTRFReport(report: CTRFReport): string {
   try {
     return JSON.stringify(report, null, 2)
   } catch (error) {
@@ -341,7 +341,7 @@ export function createCTRFReport(
   toolName?: string,
   envProps?: Record<string, string>,
   useSuiteName?: boolean
-): Report {
+): CTRFReport {
   const ctrfTests = testCases.map(testCase =>
     convertToCTRFTest(testCase, !!useSuiteName)
   )
@@ -368,7 +368,7 @@ export function createCTRFReport(
     name: toolName || 'junit-to-ctrf',
   }
 
-  const report: Report = {
+  const report: CTRFReport = {
     reportFormat: 'CTRF',
     specVersion: '0.0.0',
     generatedBy: 'junit-to-ctrf',
