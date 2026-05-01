@@ -67,7 +67,7 @@
     "typedoc": "^0.28.9",
     "typedoc-plugin-markdown": "^4.8.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4",
+    "vitest": "^4.1.5",
     "@d2t/vitest-ctrf-json-reporter": "^1.2.0",
     "prettier": "^3.5.3"
   }
