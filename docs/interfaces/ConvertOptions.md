@@ -14,7 +14,7 @@ Options for the conversion
 
 ### envProps?
 
-> `optional` **envProps**: `string`[]
+> `optional` **envProps?**: `string`[]
 
 Defined in: [convert.ts:13](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L13)
 
@@ -22,7 +22,7 @@ Defined in: [convert.ts:13](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 ### log?
 
-> `optional` **log**: `boolean`
+> `optional` **log?**: `boolean`
 
 Defined in: [convert.ts:15](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L15)
 
@@ -30,7 +30,7 @@ Defined in: [convert.ts:15](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 ### outputPath?
 
-> `optional` **outputPath**: `string`
+> `optional` **outputPath?**: `string`
 
 Defined in: [convert.ts:11](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L11)
 
@@ -38,7 +38,7 @@ Defined in: [convert.ts:11](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 ### toolName?
 
-> `optional` **toolName**: `string`
+> `optional` **toolName?**: `string`
 
 Defined in: [convert.ts:12](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L12)
 
@@ -46,6 +46,6 @@ Defined in: [convert.ts:12](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 ### useSuiteName?
 
-> `optional` **useSuiteName**: `boolean`
+> `optional` **useSuiteName?**: `boolean`
 
 Defined in: [convert.ts:14](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L14)
