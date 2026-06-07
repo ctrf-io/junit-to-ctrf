@@ -6,7 +6,7 @@
 
 # Function: convertJUnitToCTRFReport()
 
-> **convertJUnitToCTRFReport**(`pattern`, `options`): `Promise`\<`null` \| `Report`\>
+> **convertJUnitToCTRFReport**(`pattern`, `options?`): `Promise`\<`CTRFReport` \| `null`\>
 
 Defined in: [convert.ts:24](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L24)
 
@@ -20,7 +20,7 @@ Convert JUnit XML report(s) to CTRF
 
 Path to JUnit XML file or glob pattern
 
-### options
+### options?
 
 [`ConvertOptions`](../interfaces/ConvertOptions.md) = `{}`
 
@@ -28,6 +28,6 @@ Optional options for the conversion
 
 ## Returns
 
-`Promise`\<`null` \| `Report`\>
+`Promise`\<`CTRFReport` \| `null`\>
 
 Promise that resolves when the conversion is complete

@@ -1,7 +1,7 @@
-import fs from 'fs-extra'
-import xml2js from 'xml2js'
-import { glob } from 'glob'
-import type { JUnitTestCase, JUnitRetryAttempt } from '../types/junit.js'
+import fs from "fs-extra";
+import xml2js from "xml2js";
+import { glob } from "glob";
+import type { JUnitTestCase, JUnitRetryAttempt } from "../types/junit.js";
 
 /**
  * Parse retry attempts from flaky or rerun elements
@@ -10,21 +10,21 @@ import type { JUnitTestCase, JUnitRetryAttempt } from '../types/junit.js'
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseRetryAttempts(elements: any[]): JUnitRetryAttempt[] {
-  return elements.map(element => {
-    const message = element.$?.message || ''
-    const type = element.$?.type || ''
-    const trace = element._ || element.stackTrace?.[0] || ''
-    const systemOut = element['system-out']?.[0] || ''
-    const systemErr = element['system-err']?.[0] || ''
+	return elements.map((element) => {
+		const message = element.$?.message || "";
+		const type = element.$?.type || "";
+		const trace = element._ || element.stackTrace?.[0] || "";
+		const systemOut = element["system-out"]?.[0] || "";
+		const systemErr = element["system-err"]?.[0] || "";
 
-    return {
-      message,
-      type,
-      trace,
-      systemOut,
-      systemErr,
-    }
-  })
+		return {
+			message,
+			type,
+			trace,
+			systemOut,
+			systemErr,
+		};
+	});
 }
 
 /**
@@ -33,28 +33,28 @@ function parseRetryAttempts(elements: any[]): JUnitRetryAttempt[] {
  * @returns Promise resolving to an array of all test cases from all matching files
  */
 export async function readJUnitReportsFromGlob(
-  globPattern: string,
-  options: { log?: boolean } = {}
+	globPattern: string,
+	options: { log?: boolean } = {},
 ): Promise<JUnitTestCase[]> {
-  if (options.log)
-    console.log('Searching for JUnit reports matching pattern:', globPattern)
+	if (options.log)
+		console.log("Searching for JUnit reports matching pattern:", globPattern);
 
-  const files = await glob(globPattern)
+	const files = await glob(globPattern);
 
-  if (files.length === 0) {
-    if (options.log)
-      console.warn('No files found matching the pattern:', globPattern)
-    return []
-  }
+	if (files.length === 0) {
+		if (options.log)
+			console.warn("No files found matching the pattern:", globPattern);
+		return [];
+	}
 
-  if (options.log) console.log(`Found ${files.length} JUnit report files`)
+	if (options.log) console.log(`Found ${files.length} JUnit report files`);
 
-  const allTestCasesPromises = files.map(file =>
-    parseJUnitReport(file, options)
-  )
-  const testCasesArrays = await Promise.all(allTestCasesPromises)
+	const allTestCasesPromises = files.map((file) =>
+		parseJUnitReport(file, options),
+	);
+	const testCasesArrays = await Promise.all(allTestCasesPromises);
 
-  return testCasesArrays.flat()
+	return testCasesArrays.flat();
 }
 
 /**
@@ -63,106 +63,106 @@ export async function readJUnitReportsFromGlob(
  * @returns Promise resolving to an array of test cases
  */
 export async function parseJUnitReport(
-  filePath: string,
-  options: { log?: boolean } = {}
+	filePath: string,
+	options: { log?: boolean } = {},
 ): Promise<JUnitTestCase[]> {
-  if (options.log) console.log('Reading JUnit report file:', filePath)
-  const xml = await fs.readFile(filePath, 'utf-8')
-  const result = await xml2js.parseStringPromise(xml)
-  const testCases: JUnitTestCase[] = []
+	if (options.log) console.log("Reading JUnit report file:", filePath);
+	const xml = await fs.readFile(filePath, "utf-8");
+	const result = await xml2js.parseStringPromise(xml);
+	const testCases: JUnitTestCase[] = [];
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const parseTestSuite = (suite: any, suiteName: string) => {
-    if (suite.testcase) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      suite.testcase.forEach((testCase: any) => {
-        const { classname, file, lineno, name, time } = testCase.$
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const parseTestSuite = (suite: any, suiteName: string) => {
+		if (suite.testcase) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			suite.testcase.forEach((testCase: any) => {
+				const { classname, file, lineno, name, time } = testCase.$;
 
-        const hasFailure = testCase.failure !== undefined
-        const failureTrace = hasFailure
-          ? testCase.failure[0]?._ || ''
-          : undefined
-        const failureMessage = hasFailure
-          ? testCase.failure[0]?.$?.message || ''
-          : undefined
-        const failureType = hasFailure
-          ? testCase.failure[0]?.$?.type || ''
-          : undefined
+				const hasFailure = testCase.failure !== undefined;
+				const failureTrace = hasFailure
+					? testCase.failure[0]?._ || ""
+					: undefined;
+				const failureMessage = hasFailure
+					? testCase.failure[0]?.$?.message || ""
+					: undefined;
+				const failureType = hasFailure
+					? testCase.failure[0]?.$?.type || ""
+					: undefined;
 
-        const hasError = testCase.error !== undefined
-        const errorTrace = hasError ? testCase.error[0]?._ || '' : undefined
-        const errorMessage = hasError
-          ? testCase.error[0]?.$?.message || ''
-          : undefined
-        const errorType = hasError
-          ? testCase.error[0]?.$?.type || ''
-          : undefined
+				const hasError = testCase.error !== undefined;
+				const errorTrace = hasError ? testCase.error[0]?._ || "" : undefined;
+				const errorMessage = hasError
+					? testCase.error[0]?.$?.message || ""
+					: undefined;
+				const errorType = hasError
+					? testCase.error[0]?.$?.type || ""
+					: undefined;
 
-        const skipped = testCase.skipped !== undefined
+				const skipped = testCase.skipped !== undefined;
 
-        const flakyFailures = testCase.flakyFailure
-          ? parseRetryAttempts(testCase.flakyFailure)
-          : []
-        const flakyErrors = testCase.flakyError
-          ? parseRetryAttempts(testCase.flakyError)
-          : []
-        const rerunFailures = testCase.rerunFailure
-          ? parseRetryAttempts(testCase.rerunFailure)
-          : []
-        const rerunErrors = testCase.rerunError
-          ? parseRetryAttempts(testCase.rerunError)
-          : []
+				const flakyFailures = testCase.flakyFailure
+					? parseRetryAttempts(testCase.flakyFailure)
+					: [];
+				const flakyErrors = testCase.flakyError
+					? parseRetryAttempts(testCase.flakyError)
+					: [];
+				const rerunFailures = testCase.rerunFailure
+					? parseRetryAttempts(testCase.rerunFailure)
+					: [];
+				const rerunErrors = testCase.rerunError
+					? parseRetryAttempts(testCase.rerunError)
+					: [];
 
-        const systemOut = testCase['system-out']?.[0] || ''
-        const systemErr = testCase['system-err']?.[0] || ''
+				const systemOut = testCase["system-out"]?.[0] || "";
+				const systemErr = testCase["system-err"]?.[0] || "";
 
-        testCases.push({
-          suite: suiteName,
-          classname,
-          name,
-          time,
-          file,
-          lineno,
-          hasFailure,
-          failureTrace,
-          failureMessage,
-          failureType,
-          hasError,
-          errorTrace,
-          errorMessage,
-          errorType,
-          skipped,
-          flakyFailures: flakyFailures.length > 0 ? flakyFailures : undefined,
-          flakyErrors: flakyErrors.length > 0 ? flakyErrors : undefined,
-          rerunFailures: rerunFailures.length > 0 ? rerunFailures : undefined,
-          rerunErrors: rerunErrors.length > 0 ? rerunErrors : undefined,
-          systemOut: systemOut || undefined,
-          systemErr: systemErr || undefined,
-        })
-      })
-    }
-    if (suite.testsuite) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      suite.testsuite.forEach((nestedSuite: any) => {
-        const nestedSuiteName = nestedSuite.$.name || suiteName
-        parseTestSuite(nestedSuite, nestedSuiteName)
-      })
-    }
-  }
+				testCases.push({
+					suite: suiteName,
+					classname,
+					name,
+					time,
+					file,
+					lineno,
+					hasFailure,
+					failureTrace,
+					failureMessage,
+					failureType,
+					hasError,
+					errorTrace,
+					errorMessage,
+					errorType,
+					skipped,
+					flakyFailures: flakyFailures.length > 0 ? flakyFailures : undefined,
+					flakyErrors: flakyErrors.length > 0 ? flakyErrors : undefined,
+					rerunFailures: rerunFailures.length > 0 ? rerunFailures : undefined,
+					rerunErrors: rerunErrors.length > 0 ? rerunErrors : undefined,
+					systemOut: systemOut || undefined,
+					systemErr: systemErr || undefined,
+				});
+			});
+		}
+		if (suite.testsuite) {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			suite.testsuite.forEach((nestedSuite: any) => {
+				const nestedSuiteName = nestedSuite.$.name || suiteName;
+				parseTestSuite(nestedSuite, nestedSuiteName);
+			});
+		}
+	};
 
-  if (result.testsuites && result.testsuites.testsuite) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    result.testsuites.testsuite.forEach((suite: any) => {
-      const suiteName = suite.$.name
-      parseTestSuite(suite, suiteName)
-    })
-  } else if (result.testsuite) {
-    const suite = result.testsuite
-    const suiteName = suite.$.name
-    parseTestSuite(suite, suiteName)
-  } else {
-    if (options.log) console.warn('No test suites found in the provided file.')
-  }
+	if (result.testsuites?.testsuite) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		result.testsuites.testsuite.forEach((suite: any) => {
+			const suiteName = suite.$.name;
+			parseTestSuite(suite, suiteName);
+		});
+	} else if (result.testsuite) {
+		const suite = result.testsuite;
+		const suiteName = suite.$.name;
+		parseTestSuite(suite, suiteName);
+	} else {
+		if (options.log) console.warn("No test suites found in the provided file.");
+	}
 
-  return testCases
+	return testCases;
 }
