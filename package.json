@@ -51,7 +51,7 @@
 	"license": "MIT",
 	"dependencies": {
 		"ctrf": "0.2.1",
-		"fs-extra": "11.3.5",
+		"fs-extra": "11.3.6",
 		"glob": "13.0.6",
 		"xml2js": "0.6.2",
 		"yargs": "18.0.0"
