@@ -22,6 +22,9 @@ export interface JUnitTestCase {
 	file?: string;
 	lineno?: string;
 	skipped?: boolean;
+	/** Retry elements in their original XML order. */
+	flakyAttempts?: JUnitRetryAttempt[];
+	rerunAttempts?: JUnitRetryAttempt[];
 	flakyFailures?: JUnitRetryAttempt[];
 	flakyErrors?: JUnitRetryAttempt[];
 	rerunFailures?: JUnitRetryAttempt[];

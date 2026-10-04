@@ -133,24 +133,19 @@ describe("createCTRFReport with surefire retry functionality", () => {
 		expect(test.flaky).toBeUndefined();
 		expect(test.retries).toBe(2);
 		expect(test.retryAttempts).toHaveLength(2);
-		expect(test.retryAttempts?.[0].attempt).toBe(2);
-		expect(test.retryAttempts?.[0].status).toBe("failed");
+		expect(test.retryAttempts?.map((attempt) => attempt.attempt)).toEqual([
+			1, 2,
+		]);
 		expect(test.retryAttempts?.[0].message).toBe("expected true but was false");
 		expect(test.retryAttempts?.[0].stdout).toEqual([
+			"Run 1 output: Starting testFlakyFeature...",
+		]);
+		expect(test.retryAttempts?.[1].stdout).toEqual([
 			"Run 2 output: Retrying testFlakyFeature...",
 		]);
-		expect(test.retryAttempts?.[0].stderr).toEqual([
-			"Run 2 error: java.lang.AssertionError at line 42",
-		]);
-		expect(test.retryAttempts?.[1].attempt).toBe(3);
-		expect(test.retryAttempts?.[1].status).toBe("failed");
-		expect(test.retryAttempts?.[1].message).toBe(
-			"NullPointerException occurred",
-		);
-		expect(test.retryAttempts?.[1].stdout).toEqual([
-			"Run 3 output: Retrying testFlakyFeature...",
-		]);
-		expect(test.retryAttempts?.[1].stderr).toEqual([
+		expect(test.message).toBe("NullPointerException occurred");
+		expect(test.stdout).toEqual(["Run 3 output: Retrying testFlakyFeature..."]);
+		expect(test.stderr).toEqual([
 			"Run 3 error: java.lang.NullPointerException at line 45",
 		]);
 	});

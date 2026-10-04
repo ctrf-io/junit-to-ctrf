@@ -141,3 +141,16 @@ CTRF is a universal JSON test report schema that addresses the lack of a standar
 ## Support Us
 
 If you find this project useful, consider giving it a GitHub star ⭐ It means a lot to us.
+
+
+## CTRF specification version
+
+Generated reports declare `specVersion: "0.1.0"` and are strictly validated
+before they are returned or written. Suites are arrays; an unavailable suite
+is omitted. Surefire retry history contains prior attempts starting at 1; the
+final attempt supplies the main test result and diagnostics. Failure/error
+retry elements retain their XML order.
+
+`--env buildNumber=123` emits an integer (including 0); invalid build numbers
+are rejected. Nonstandard environment properties are preserved under
+`results.environment.extra`, as required by the specification.

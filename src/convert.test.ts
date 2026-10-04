@@ -62,7 +62,7 @@ describe("createCTRFReport", () => {
 
 		expect(report).toMatchObject({
 			reportFormat: "CTRF",
-			specVersion: "0.0.0",
+			specVersion: "0.1.0",
 			generatedBy: "junit-to-ctrf",
 			results: {
 				tool: {
@@ -130,7 +130,7 @@ describe("createCTRFReport", () => {
 
 		const report = createCTRFReport(mockTestCases, undefined, envProps);
 
-		expect(report.results.environment).toEqual(envProps);
+		expect(report.results.environment).toEqual({ extra: envProps });
 	});
 
 	it("should not include environment when not provided", () => {
