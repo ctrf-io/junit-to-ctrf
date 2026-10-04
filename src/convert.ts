@@ -1,4 +1,5 @@
 import fs from "fs-extra";
+import { CURRENT_SPEC_VERSION, getSchema, validateStrict } from "ctrf";
 import type { CTRFReport, Test, Tool, RetryAttempt } from "ctrf";
 import type { JUnitTestCase, JUnitRetryAttempt } from "../types/junit.js";
 import { readJUnitReportsFromGlob } from "./read.js";
@@ -30,7 +31,14 @@ export async function convertJUnitToCTRFReport(
 		log: options.log,
 	});
 	const envPropsObj = envProps
-		? Object.fromEntries(envProps.map((prop) => prop.split("=")))
+		? Object.fromEntries(
+				envProps.map((prop) => {
+					const separator = prop.indexOf("=");
+					if (separator < 1)
+						throw new Error("Environment properties must use key=value");
+					return [prop.slice(0, separator), prop.slice(separator + 1)];
+				}),
+			)
 		: {};
 
 	if (testCases.length === 0) {
@@ -203,77 +211,52 @@ function processTestWithRetries(testCase: JUnitTestCase): {
 	retryCount: number;
 	finalStatus: Test["status"];
 	isFlaky: boolean;
+	finalAttempt?: JUnitRetryAttempt;
 } {
-	const retryAttempts: RetryAttempt[] = [];
-	let attemptNumber = 1;
-
-	if (testCase.flakyFailures && testCase.flakyFailures.length > 0) {
-		retryAttempts.push(
-			...convertRetryAttempts(testCase.flakyFailures, attemptNumber),
-		);
-		attemptNumber += testCase.flakyFailures.length;
+	const flaky = testCase.flakyAttempts ?? [
+		...(testCase.flakyFailures ?? []),
+		...(testCase.flakyErrors ?? []),
+	];
+	const reruns = testCase.rerunAttempts ?? [
+		...(testCase.rerunFailures ?? []),
+		...(testCase.rerunErrors ?? []),
+	];
+	if (flaky.length > 0) {
+		return {
+			retryAttempts: convertRetryAttempts(flaky, 1),
+			retryCount: flaky.length,
+			finalStatus: "passed",
+			isFlaky: true,
+		};
 	}
-
-	if (testCase.flakyErrors && testCase.flakyErrors.length > 0) {
-		retryAttempts.push(
-			...convertRetryAttempts(testCase.flakyErrors, attemptNumber),
-		);
-		attemptNumber += testCase.flakyErrors.length;
+	if (reruns.length > 0) {
+		const original: JUnitRetryAttempt = {
+			message: testCase.failureMessage ?? testCase.errorMessage,
+			trace: testCase.failureTrace ?? testCase.errorTrace,
+			systemOut: testCase.systemOut,
+			systemErr: testCase.systemErr,
+		};
+		return {
+			retryAttempts: convertRetryAttempts(
+				[original, ...reruns.slice(0, -1)],
+				1,
+			),
+			retryCount: reruns.length,
+			finalStatus: "failed",
+			isFlaky: false,
+			finalAttempt: reruns[reruns.length - 1],
+		};
 	}
-
-	const hasFlaky =
-		(testCase.flakyFailures && testCase.flakyFailures.length > 0) ||
-		(testCase.flakyErrors && testCase.flakyErrors.length > 0);
-
-	if (!hasFlaky) {
-		attemptNumber = 2;
-	}
-
-	if (testCase.rerunFailures && testCase.rerunFailures.length > 0) {
-		retryAttempts.push(
-			...convertRetryAttempts(testCase.rerunFailures, attemptNumber),
-		);
-		attemptNumber += testCase.rerunFailures.length;
-	}
-
-	if (testCase.rerunErrors && testCase.rerunErrors.length > 0) {
-		retryAttempts.push(
-			...convertRetryAttempts(testCase.rerunErrors, attemptNumber),
-		);
-		attemptNumber += testCase.rerunErrors.length;
-	}
-
-	const hasRerun =
-		(testCase.rerunFailures && testCase.rerunFailures.length > 0) ||
-		(testCase.rerunErrors && testCase.rerunErrors.length > 0);
-
-	let finalStatus: Test["status"];
-
-	if (hasFlaky) {
-		finalStatus = "passed";
-	} else if (hasRerun) {
-		if (testCase.hasError) {
-			finalStatus = "failed";
-		} else if (testCase.hasFailure) {
-			finalStatus = "failed";
-		} else {
-			finalStatus = "failed";
-		}
-	} else {
-		if (testCase.hasFailure || testCase.hasError) {
-			finalStatus = "failed";
-		} else if (testCase.skipped) {
-			finalStatus = "skipped";
-		} else {
-			finalStatus = "passed";
-		}
-	}
-
 	return {
-		retryAttempts,
-		retryCount: retryAttempts.length,
-		finalStatus,
-		isFlaky: !!hasFlaky,
+		retryAttempts: [],
+		retryCount: 0,
+		finalStatus:
+			testCase.hasFailure || testCase.hasError
+				? "failed"
+				: testCase.skipped
+					? "skipped"
+					: "passed",
+		isFlaky: false,
 	};
 }
 
@@ -307,11 +290,18 @@ function convertToCTRFTest(
 		filePath: testCase.file,
 		line: line,
 		message:
-			sanitizeString(testCase.failureMessage || testCase.errorMessage) ||
-			undefined,
+			sanitizeString(
+				testInfo.finalAttempt
+					? testInfo.finalAttempt.message
+					: testCase.failureMessage || testCase.errorMessage,
+			) || undefined,
 		trace:
-			sanitizeString(testCase.failureTrace || testCase.errorTrace) || undefined,
-		suite: suiteAsArray,
+			sanitizeString(
+				testInfo.finalAttempt
+					? testInfo.finalAttempt.trace
+					: testCase.failureTrace || testCase.errorTrace,
+			) || undefined,
+		suite: suiteAsArray.length > 0 ? suiteAsArray : undefined,
 	};
 
 	if (testInfo.retryCount > 0) {
@@ -323,8 +313,16 @@ function convertToCTRFTest(
 		test.flaky = true;
 	}
 
-	const stdout = convertOutputToArray(testCase.systemOut);
-	const stderr = convertOutputToArray(testCase.systemErr);
+	const stdout = convertOutputToArray(
+		testInfo.finalAttempt
+			? testInfo.finalAttempt.systemOut
+			: testCase.systemOut,
+	);
+	const stderr = convertOutputToArray(
+		testInfo.finalAttempt
+			? testInfo.finalAttempt.systemErr
+			: testCase.systemErr,
+	);
 
 	if (stdout) {
 		test.stdout = stdout;
@@ -370,7 +368,7 @@ export function createCTRFReport(
 
 	const report: CTRFReport = {
 		reportFormat: "CTRF",
-		specVersion: "0.0.0",
+		specVersion: CURRENT_SPEC_VERSION,
 		generatedBy: "junit-to-ctrf",
 		timestamp: new Date().toISOString(),
 		results: {
@@ -381,8 +379,35 @@ export function createCTRFReport(
 	};
 
 	if (envProps && Object.keys(envProps).length > 0) {
-		report.results.environment = envProps;
+		const properties = (
+			getSchema(CURRENT_SPEC_VERSION) as {
+				properties: {
+					results: {
+						properties: {
+							environment: { properties: Record<string, unknown> };
+						};
+					};
+				};
+			}
+		).properties.results.properties.environment.properties;
+		const environment: Record<string, unknown> = {};
+		const extra: Record<string, string> = {};
+		for (const [key, value] of Object.entries(envProps)) {
+			if (key === "buildNumber") {
+				const buildNumber = Number(value);
+				if (value.trim() === "" || !Number.isSafeInteger(buildNumber))
+					throw new Error("buildNumber must be an integer");
+				environment.buildNumber = buildNumber;
+			} else if (key !== "extra" && Object.hasOwn(properties, key)) {
+				environment[key] = value;
+			} else {
+				extra[key] = value;
+			}
+		}
+		if (Object.keys(extra).length > 0) environment.extra = extra;
+		report.results.environment = environment;
 	}
 
+	validateStrict(report, { specVersion: CURRENT_SPEC_VERSION });
 	return report;
 }
