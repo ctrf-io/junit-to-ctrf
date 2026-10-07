@@ -23,6 +23,14 @@ void yargs(hideBin(process.argv))
 					default: "ctrf/ctrf-report.json",
 					description: "Output directory and filename for the CTRF report",
 				})
+				.option("run-id", {
+					type: "string",
+					description: "Logical run ID shared by coordinated input reports",
+				})
+				.option("shard-id", {
+					type: "string",
+					description: "Partition producing this report",
+				})
 				.option("tool", {
 					alias: "t",
 					type: "string",
@@ -45,6 +53,8 @@ void yargs(hideBin(process.argv))
 				const { pattern, output, tool, env, useSuiteName } = argv;
 				await convertJUnitToCTRFReport(pattern as string, {
 					outputPath: output as string,
+					runId: argv.runId,
+					shardId: argv.shardId,
 					toolName: tool as string,
 					envProps: env as string[],
 					useSuiteName: useSuiteName as boolean,

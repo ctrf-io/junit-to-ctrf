@@ -1,3 +1,10 @@
+import { randomUUID } from "node:crypto";
+import {
+	identityValue,
+	runIdentity,
+	testIdentity,
+	type IdentityOptions,
+} from "./identity.js";
 import fs from "fs-extra";
 import { CURRENT_SPEC_VERSION, getSchema, validateStrict } from "ctrf";
 import type { CTRFReport, Test, Tool, RetryAttempt } from "ctrf";
@@ -8,7 +15,7 @@ import path from "node:path";
 /**
  * Options for the conversion
  */
-export interface ConvertOptions {
+export interface ConvertOptions extends IdentityOptions {
 	outputPath?: string;
 	toolName?: string;
 	envProps?: string[];
@@ -55,6 +62,7 @@ export async function convertJUnitToCTRFReport(
 		toolName,
 		envPropsObj,
 		useSuiteName,
+		options,
 	);
 
 	if (outputPath) {
@@ -182,6 +190,7 @@ function convertRetryAttempts(
 	return retryAttempts.map((attempt, index) => {
 		const retryAttempt: RetryAttempt = {
 			attempt: startAttempt + index,
+			attemptId: randomUUID(),
 			status: "failed" as const,
 			message: sanitizeString(attempt.message),
 			trace: sanitizeString(attempt.trace),
@@ -263,6 +272,7 @@ function processTestWithRetries(testCase: JUnitTestCase): {
 function convertToCTRFTest(
 	testCase: JUnitTestCase,
 	useSuiteName: boolean,
+	identityOptions: IdentityOptions = {},
 ): Test {
 	const testInfo = processTestWithRetries(testCase);
 
@@ -284,6 +294,16 @@ function convertToCTRFTest(
 	const line = testCase.lineno ? parseInt(testCase.lineno, 10) : undefined;
 
 	const test: Test = {
+		testId: testIdentity(
+			"junit",
+			{
+				name: testCase.name,
+				suite: [testCase.suite, testCase.classname],
+				filePath: testCase.file,
+			},
+			identityOptions,
+		),
+		executionId: randomUUID(),
 		name: testName || "Unnamed Test",
 		status: testInfo.finalStatus,
 		duration: durationMs,
@@ -339,9 +359,10 @@ export function createCTRFReport(
 	toolName?: string,
 	envProps?: Record<string, string>,
 	useSuiteName?: boolean,
+	identityOptions: IdentityOptions = {},
 ): CTRFReport {
 	const ctrfTests = testCases.map((testCase) =>
-		convertToCTRFTest(testCase, !!useSuiteName),
+		convertToCTRFTest(testCase, !!useSuiteName, identityOptions),
 	);
 	const passed = ctrfTests.filter((test) => test.status === "passed").length;
 	const failed = ctrfTests.filter((test) => test.status === "failed").length;
@@ -368,6 +389,8 @@ export function createCTRFReport(
 
 	const report: CTRFReport = {
 		reportFormat: "CTRF",
+		reportId: randomUUID(),
+		runId: runIdentity(identityOptions.runId),
 		specVersion: CURRENT_SPEC_VERSION,
 		generatedBy: "junit-to-ctrf",
 		timestamp: new Date().toISOString(),
@@ -408,6 +431,9 @@ export function createCTRFReport(
 		report.results.environment = environment;
 	}
 
+	const shardId = identityValue(identityOptions.shardId, "shardId");
+	if (shardId)
+		report.results.environment = { ...report.results.environment, shardId };
 	validateStrict(report, { specVersion: CURRENT_SPEC_VERSION });
 	return report;
 }
