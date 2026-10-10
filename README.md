@@ -145,7 +145,7 @@ If you find this project useful, consider giving it a GitHub star ⭐ It means a
 
 ## CTRF specification version
 
-Generated reports declare `specVersion: "0.1.0"` and are strictly validated
+Generated reports declare `specVersion: "0.2.0"` and are strictly validated
 before they are returned or written. Suites are arrays; an unavailable suite
 is omitted. Surefire retry history contains prior attempts starting at 1; the
 final attempt supplies the main test result and diagnostics. Failure/error
@@ -157,4 +157,4 @@ are rejected. Nonstandard environment properties are preserved under
 
 ## Identity and lineage
 
-Each conversion creates a new UUID `reportId` and standalone `runId`. Tests have stable logical `testId` values derived from JUnit suite, class, file and original name, independent of display-name prefixing, and distinct `executionId` values. Retry history has distinct `attemptId` values. Use `--run-id` and `--shard-id` (or API options `runId`/`shardId`) to coordinate files from one run. API `testIdResolver` can override logical IDs when source labels are ambiguous. Identity strings must be non-empty.
+Each conversion creates a new UUID `reportId` and standalone `runId`. Tests have stable logical `testId` values derived from JUnit suite, class, file and original name, independent of display-name prefixing, and distinct `executionId` values. The final test result and each retry history entry have distinct `attemptId` values. Use `--run-id` and `--shard-id` (or API options `runId`/`shardId`) to coordinate files from one run. API `testIdResolver` can override logical IDs when source labels are ambiguous. Identity strings must be non-empty.

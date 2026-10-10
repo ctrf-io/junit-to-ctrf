@@ -304,6 +304,7 @@ function convertToCTRFTest(
 			identityOptions,
 		),
 		executionId: randomUUID(),
+		attemptId: randomUUID(),
 		name: testName || "Unnamed Test",
 		status: testInfo.finalStatus,
 		duration: durationMs,

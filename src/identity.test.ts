@@ -17,6 +17,10 @@ describe("converter identity", () => {
 			two?.results.tests[0].executionId,
 		);
 		expect(one?.runId).toBe(two?.runId);
+		expect(one?.results.tests[0].attemptId).toBeTruthy();
+		expect(
+			one?.results.tests[0].retryAttempts?.map((attempt) => attempt.attemptId),
+		).not.toContain(one?.results.tests[0].attemptId);
 		expect(
 			new Set(
 				one?.results.tests[0].retryAttempts?.map(
@@ -25,6 +29,6 @@ describe("converter identity", () => {
 			).size,
 		).toBe(2);
 		expect(one?.results.environment?.shardId).toBe("one");
-		expect(() => validateStrict(one!, { specVersion: "0.1.0" })).not.toThrow();
+		expect(() => validateStrict(one!, { specVersion: "0.2.0" })).not.toThrow();
 	});
 });

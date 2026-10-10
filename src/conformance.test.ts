@@ -15,7 +15,7 @@ const fixtures = [
 	"test-junit-problem-string.xml",
 ];
 
-describe("CTRF 0.1.0 conversion", () => {
+describe("CTRF 0.2.0 conversion", () => {
 	it.each(fixtures)(
 		"strictly validates real XML fixture %s",
 		async (fixture) => {
@@ -26,7 +26,7 @@ describe("CTRF 0.1.0 conversion", () => {
 					"buildUrl=https://example.com/build?x=y",
 				],
 			});
-			expect(report?.specVersion).toBe("0.1.0");
+			expect(report?.specVersion).toBe("0.2.0");
 			expect(report?.results.environment?.buildNumber).toBe(0);
 			expect(report?.results.environment?.extra).toEqual({ nodeVersion: "24" });
 			expect(report?.results.environment?.buildUrl).toBe(
@@ -34,7 +34,7 @@ describe("CTRF 0.1.0 conversion", () => {
 			);
 			expect(() =>
 				validateStrict(JSON.parse(JSON.stringify(report)), {
-					specVersion: "0.1.0",
+					specVersion: "0.2.0",
 				}),
 			).not.toThrow();
 		},

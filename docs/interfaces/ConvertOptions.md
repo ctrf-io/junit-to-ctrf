@@ -44,7 +44,7 @@ Defined in: [convert.ts:19](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 > `optional` **runId?**: `string`
 
-Defined in: identity.ts:13
+Defined in: [identity.ts:13](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/identity.ts#L13)
 
 Supply the same value to every document in a coordinated logical run.
 
@@ -58,7 +58,7 @@ Supply the same value to every document in a coordinated logical run.
 
 > `optional` **shardId?**: `string`
 
-Defined in: identity.ts:15
+Defined in: [identity.ts:15](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/identity.ts#L15)
 
 Label the partition producing this document, not a test thread.
 
@@ -72,7 +72,7 @@ Label the partition producing this document, not a test thread.
 
 > `optional` **testIdResolver?**: (`test`) => `string`
 
-Defined in: identity.ts:17
+Defined in: [identity.ts:17](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/identity.ts#L17)
 
 Override the deterministic default when the framework cannot distinguish cases.
 
