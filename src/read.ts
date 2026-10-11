@@ -3,6 +3,10 @@ import xml2js from "xml2js";
 import { glob } from "glob";
 import type { JUnitTestCase, JUnitRetryAttempt } from "../types/junit.js";
 
+function textContent(value: string | { _?: string } | undefined): string {
+	return typeof value === "string" ? value : (value?._ ?? "");
+}
+
 /**
  * Parse retry attempts from flaky or rerun elements
  * @param elements - Array of flaky failure/error or rerun failure/error elements
@@ -13,9 +17,9 @@ function parseRetryAttempts(elements: any[]): JUnitRetryAttempt[] {
 	return elements.map((element) => {
 		const message = element.$?.message || "";
 		const type = element.$?.type || "";
-		const trace = element._ || element.stackTrace?.[0] || "";
-		const systemOut = element["system-out"]?.[0] || "";
-		const systemErr = element["system-err"]?.[0] || "";
+		const trace = element._ || textContent(element.stackTrace?.[0]);
+		const systemOut = textContent(element["system-out"]?.[0]);
+		const systemErr = textContent(element["system-err"]?.[0]);
 
 		return {
 			message,
@@ -68,7 +72,10 @@ export async function parseJUnitReport(
 ): Promise<JUnitTestCase[]> {
 	if (options.log) console.log("Reading JUnit report file:", filePath);
 	const xml = await fs.readFile(filePath, "utf-8");
-	const result = await xml2js.parseStringPromise(xml);
+	const result = await xml2js.parseStringPromise(xml, {
+		explicitChildren: true,
+		preserveChildrenOrder: true,
+	});
 	const testCases: JUnitTestCase[] = [];
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -113,8 +120,19 @@ export async function parseJUnitReport(
 					? parseRetryAttempts(testCase.rerunError)
 					: [];
 
-				const systemOut = testCase["system-out"]?.[0] || "";
-				const systemErr = testCase["system-err"]?.[0] || "";
+				const children = testCase.$$ ?? [];
+				const flakyAttempts = parseRetryAttempts(
+					children.filter((element: { "#name": string }) =>
+						["flakyFailure", "flakyError"].includes(element["#name"]),
+					),
+				);
+				const rerunAttempts = parseRetryAttempts(
+					children.filter((element: { "#name": string }) =>
+						["rerunFailure", "rerunError"].includes(element["#name"]),
+					),
+				);
+				const systemOut = textContent(testCase["system-out"]?.[0]);
+				const systemErr = textContent(testCase["system-err"]?.[0]);
 
 				testCases.push({
 					suite: suiteName,
@@ -132,6 +150,8 @@ export async function parseJUnitReport(
 					errorMessage,
 					errorType,
 					skipped,
+					flakyAttempts,
+					rerunAttempts,
 					flakyFailures: flakyFailures.length > 0 ? flakyFailures : undefined,
 					flakyErrors: flakyErrors.length > 0 ? flakyErrors : undefined,
 					rerunFailures: rerunFailures.length > 0 ? rerunFailures : undefined,

@@ -1,4 +1,4 @@
-[**Junit CTRF Test Reporter v0.0.14**](../README.md)
+[**Junit CTRF Test Reporter v0.1.0**](../README.md)
 
 ***
 
@@ -8,7 +8,7 @@
 
 > **convertJUnitToCTRFReport**(`pattern`, `options?`): `Promise`\<`CTRFReport` \| `null`\>
 
-Defined in: [convert.ts:24](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L24)
+Defined in: [convert.ts:31](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L31)
 
 Convert JUnit XML report(s) to CTRF
 

@@ -1,4 +1,4 @@
-[**Junit CTRF Test Reporter v0.0.14**](../README.md)
+[**Junit CTRF Test Reporter v0.1.0**](../README.md)
 
 ***
 
@@ -6,9 +6,13 @@
 
 # Interface: ConvertOptions
 
-Defined in: [convert.ts:10](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L10)
+Defined in: [convert.ts:17](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L17)
 
 Options for the conversion
+
+## Extends
+
+- `IdentityOptions`
 
 ## Properties
 
@@ -16,7 +20,7 @@ Options for the conversion
 
 > `optional` **envProps?**: `string`[]
 
-Defined in: [convert.ts:13](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L13)
+Defined in: [convert.ts:20](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L20)
 
 ***
 
@@ -24,7 +28,7 @@ Defined in: [convert.ts:13](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 > `optional` **log?**: `boolean`
 
-Defined in: [convert.ts:15](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L15)
+Defined in: [convert.ts:22](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L22)
 
 ***
 
@@ -32,7 +36,59 @@ Defined in: [convert.ts:15](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 > `optional` **outputPath?**: `string`
 
-Defined in: [convert.ts:11](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L11)
+Defined in: [convert.ts:18](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L18)
+
+***
+
+### runId?
+
+> `optional` **runId?**: `string`
+
+Defined in: [identity.ts:13](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/identity.ts#L13)
+
+Supply the same value to every document in a coordinated logical run.
+
+#### Inherited from
+
+`IdentityOptions.runId`
+
+***
+
+### shardId?
+
+> `optional` **shardId?**: `string`
+
+Defined in: [identity.ts:15](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/identity.ts#L15)
+
+Label the partition producing this document, not a test thread.
+
+#### Inherited from
+
+`IdentityOptions.shardId`
+
+***
+
+### testIdResolver?
+
+> `optional` **testIdResolver?**: (`test`) => `string`
+
+Defined in: [identity.ts:17](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/identity.ts#L17)
+
+Override the deterministic default when the framework cannot distinguish cases.
+
+#### Parameters
+
+##### test
+
+`TestIdentity`
+
+#### Returns
+
+`string`
+
+#### Inherited from
+
+`IdentityOptions.testIdResolver`
 
 ***
 
@@ -40,7 +96,7 @@ Defined in: [convert.ts:11](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 > `optional` **toolName?**: `string`
 
-Defined in: [convert.ts:12](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L12)
+Defined in: [convert.ts:19](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L19)
 
 ***
 
@@ -48,4 +104,4 @@ Defined in: [convert.ts:12](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 > `optional` **useSuiteName?**: `boolean`
 
-Defined in: [convert.ts:14](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L14)
+Defined in: [convert.ts:21](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L21)

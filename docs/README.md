@@ -1,8 +1,8 @@
-**Junit CTRF Test Reporter v0.0.14**
+**Junit CTRF Test Reporter v0.1.0**
 
 ***
 
-# Junit CTRF Test Reporter v0.0.14
+# Junit CTRF Test Reporter v0.1.0
 
 ## Interfaces
 
