@@ -154,7 +154,3 @@ retry elements retain their XML order.
 `--env buildNumber=123` emits an integer (including 0); invalid build numbers
 are rejected. Nonstandard environment properties are preserved under
 `results.environment.extra`, as required by the specification.
-
-## Identity and lineage
-
-Each conversion creates a new UUID `reportId` and standalone `runId`. Tests have stable logical `testId` values derived from JUnit suite, class, file and original name, independent of display-name prefixing, and distinct `executionId` values. The final test result and each retry history entry have distinct `attemptId` values. Use `--run-id` and `--shard-id` (or API options `runId`/`shardId`) to coordinate files from one run. API `testIdResolver` can override logical IDs when source labels are ambiguous. Identity strings must be non-empty.

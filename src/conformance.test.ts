@@ -27,6 +27,7 @@ describe("CTRF 0.2.0 conversion", () => {
 				],
 			});
 			expect(report?.specVersion).toBe("0.2.0");
+			expect(report).not.toHaveProperty("runId");
 			expect(report?.results.environment?.buildNumber).toBe(0);
 			expect(report?.results.environment?.extra).toEqual({ nodeVersion: "24" });
 			expect(report?.results.environment?.buildUrl).toBe(
@@ -88,4 +89,36 @@ describe("CTRF 0.2.0 conversion", () => {
 			).rejects.toThrow("buildNumber must be an integer");
 		},
 	);
+});
+
+describe("converter identity", () => {
+	it("keeps logical IDs independent of display prefixing and uses distinct execution/attempt IDs", async () => {
+		const one = await convertJUnitToCTRFReport(
+			"reports/test-surefire-retry.xml",
+			{ runId: "run", shardId: "one", useSuiteName: true },
+		);
+		const two = await convertJUnitToCTRFReport(
+			"reports/test-surefire-retry.xml",
+			{ runId: "run", shardId: "two", useSuiteName: false },
+		);
+		if (!one || !two) throw new Error("Expected converted reports");
+		expect(one?.results.tests[0].testId).toBe(two?.results.tests[0].testId);
+		expect(one?.results.tests[0].executionId).not.toBe(
+			two?.results.tests[0].executionId,
+		);
+		expect(one?.runId).toBe(two?.runId);
+		expect(one?.results.tests[0].attemptId).toBeTruthy();
+		expect(
+			one?.results.tests[0].retryAttempts?.map((attempt) => attempt.attemptId),
+		).not.toContain(one?.results.tests[0].attemptId);
+		expect(
+			new Set(
+				one?.results.tests[0].retryAttempts?.map(
+					(attempt) => attempt.attemptId,
+				),
+			).size,
+		).toBe(2);
+		expect(one?.results.environment?.shardId).toBe("one");
+		expect(() => validateStrict(one, { specVersion: "0.2.0" })).not.toThrow();
+	});
 });

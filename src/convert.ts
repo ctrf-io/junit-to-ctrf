@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import {
 	identityValue,
-	runIdentity,
 	testIdentity,
 	type IdentityOptions,
 } from "./identity.js";
@@ -391,7 +390,9 @@ export function createCTRFReport(
 	const report: CTRFReport = {
 		reportFormat: "CTRF",
 		reportId: randomUUID(),
-		runId: runIdentity(identityOptions.runId),
+		...(identityOptions.runId !== undefined
+			? { runId: identityValue(identityOptions.runId, "runId") }
+			: {}),
 		specVersion: CURRENT_SPEC_VERSION,
 		generatedBy: "junit-to-ctrf",
 		timestamp: new Date().toISOString(),

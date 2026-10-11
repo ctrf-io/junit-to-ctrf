@@ -6,7 +6,7 @@
 
 # Interface: ConvertOptions
 
-Defined in: [convert.ts:18](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L18)
+Defined in: [convert.ts:17](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L17)
 
 Options for the conversion
 
@@ -20,7 +20,7 @@ Options for the conversion
 
 > `optional` **envProps?**: `string`[]
 
-Defined in: [convert.ts:21](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L21)
+Defined in: [convert.ts:20](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L20)
 
 ***
 
@@ -28,7 +28,7 @@ Defined in: [convert.ts:21](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 > `optional` **log?**: `boolean`
 
-Defined in: [convert.ts:23](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L23)
+Defined in: [convert.ts:22](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L22)
 
 ***
 
@@ -36,7 +36,7 @@ Defined in: [convert.ts:23](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 > `optional` **outputPath?**: `string`
 
-Defined in: [convert.ts:19](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L19)
+Defined in: [convert.ts:18](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L18)
 
 ***
 
@@ -96,7 +96,7 @@ Override the deterministic default when the framework cannot distinguish cases.
 
 > `optional` **toolName?**: `string`
 
-Defined in: [convert.ts:20](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L20)
+Defined in: [convert.ts:19](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L19)
 
 ***
 
@@ -104,4 +104,4 @@ Defined in: [convert.ts:20](https://github.com/ctrf-io/junit-to-ctrf/blob/main/s
 
 > `optional` **useSuiteName?**: `boolean`
 
-Defined in: [convert.ts:22](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L22)
+Defined in: [convert.ts:21](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L21)

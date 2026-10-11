@@ -8,7 +8,7 @@
 
 > **convertJUnitToCTRFReport**(`pattern`, `options?`): `Promise`\<`CTRFReport` \| `null`\>
 
-Defined in: [convert.ts:32](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L32)
+Defined in: [convert.ts:31](https://github.com/ctrf-io/junit-to-ctrf/blob/main/src/convert.ts#L31)
 
 Convert JUnit XML report(s) to CTRF
 
