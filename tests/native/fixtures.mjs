@@ -232,9 +232,8 @@ export function expectedReport(scenario) {
 			status: source.status,
 			duration: source.duration,
 			suite: [source.suite],
-			...(source.file !== undefined
-				? { filePath: source.file, line: source.line }
-				: {}),
+			...(source.file !== undefined ? { filePath: source.file } : {}),
+			...(source.line !== undefined ? { line: source.line } : {}),
 		};
 		for (const key of ["message", "trace", "stdout", "stderr"])
 			if (source[key] !== undefined) test[key] = source[key];

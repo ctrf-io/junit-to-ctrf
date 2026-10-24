@@ -3,6 +3,7 @@ import { mkdtemp, mkdir, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { glob } from "glob";
+import { authenticScenarios } from "../../../native/authentic-junit.mjs";
 import {
 	expectedReport,
 	linkContext,
@@ -15,7 +16,7 @@ export async function unitContext(producer) {
 	const scratch = await mkdtemp(path.join(tmpdir(), "ctrf-junit-unit-"));
 	try {
 		const samples = [];
-		for (const scenario of scenarios()) {
+		for (const scenario of [...scenarios(), ...authenticScenarios()]) {
 			const directory = path.join(scratch, scenario.name);
 			await mkdir(directory);
 			const groups = scenario.glob
@@ -24,7 +25,12 @@ export async function unitContext(producer) {
 			const sources = [];
 			for (const [index, cases] of groups.entries()) {
 				const file = path.join(directory, `input-${index}.xml`);
-				await writeFile(file, xml(cases, scenario.nested));
+				await writeFile(
+					file,
+					scenario.authentic
+						? await readFile(scenario.sourceFile)
+						: xml(cases, scenario.nested),
+				);
 				sources.push({ file, cases });
 			}
 			const input = scenario.glob

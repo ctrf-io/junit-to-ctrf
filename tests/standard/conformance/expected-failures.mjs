@@ -1,13 +1,27 @@
 import { runExpectedFailure } from "./shared/expected-failures.mjs";
 import { checkEntry, catalogue, valuesAt } from "./shared/checks.mjs";
+const traceFamily = "conformance/property/results.tests[].trace";
+const missingTrace =
+	"mocha fixture failure\nError: mocha fixture failure\n    at Context.<anonymous> (mocha/cases.cjs:6:9)\n    at process.processImmediate (node:internal/timers:574:21)";
+const traceFixtureSha =
+	"c73b93b70c80768fc566caa68d9770a441b40f299f0a548feec6b0e3b8ead15c";
 const family = "conformance/report/respects-reserved-extension-ownership";
 export const expectedFailures = {
+	[traceFamily]: {
+		issue: "junit-plain-text-failure-trace",
+		reason:
+			"Plain-text Mocha xUnit failure bodies are dropped instead of preserved as the trace",
+		followUp: "https://github.com/ctrf-io/junit-to-ctrf/issues/81",
+		samples: {
+			unit: ["authentic-mocha-xunit"],
+			integration: ["authentic-mocha-xunit"],
+		},
+	},
 	[family]: {
 		issue: "junit-reserved-environment-extensions",
 		reason:
 			"Custom environment properties are emitted with reserved CTRF extension prefixes",
-		followUp:
-			"Reject or namespace reserved environment extension keys; replace this local tracking key with the public fix issue before publication",
+		followUp: "https://github.com/ctrf-io/junit-to-ctrf/issues/80",
 		samples: {
 			unit: ["reserved-dot", "reserved-slash"],
 			integration: ["reserved-dot", "reserved-slash"],
@@ -19,6 +33,25 @@ export function expectedFailure(entry, level) {
 	return issue?.samples[level] ? issue : undefined;
 }
 export function matchesKnownFailure(entry, sample, issue, error) {
+	if (entry.id === traceFamily) {
+		return (
+			issue.issue === expectedFailures[traceFamily].issue &&
+			sample.name === "authentic-mocha-xunit" &&
+			sample.native?.fixture?.sha256 === traceFixtureSha &&
+			sample.native.cases[1]?.trace === missingTrace &&
+			sample.report.results.tests.length === 4 &&
+			sample.report.results.tests[1].name === "failure" &&
+			sample.report.results.tests[1].status === "failed" &&
+			valuesAt(sample.report, entry.path).length === 0 &&
+			error.code === "ERR_ASSERTION" &&
+			error.operator === "deepStrictEqual" &&
+			JSON.stringify(error.actual) === "[]" &&
+			JSON.stringify(error.expected) === JSON.stringify([missingTrace]) &&
+			error.message.split("\n")[0] ===
+				`${sample.name}: source mapping ${entry.path}`
+		);
+	}
+
 	const key = {
 		"reserved-dot": "ctrf.fixture",
 		"reserved-slash": "ctrf/fixture",

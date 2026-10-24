@@ -107,3 +107,10 @@ shared CTRF writer. Ordinary tests use the default and CTRF reporters configured
 additional runner JSON output is required.
 In your PR, include commands and results and explain skips, expected failures and
 warnings. Track defect details and fixes in GitHub issues rather than these docs.
+
+For XML reader changes, retain coverage from the
+[framework-generated corpus](tests/native/junit-fixtures/README.md) alongside
+controlled boundary fixtures. Refresh exporter snapshots with
+`npm run fixtures:junit:refresh` when assessing new source versions. Preserve raw
+XML, record generation provenance, and derive expectations from native/source
+results. Review expected-failure markers when snapshots change.

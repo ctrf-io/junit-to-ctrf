@@ -31,7 +31,8 @@
 		"test:standard:conformance:unit": "node tests/standard/conformance/run.mjs unit",
 		"test:standard:conformance:integration": "node tests/standard/conformance/run.mjs integration",
 		"test:standard:conformance": "node tests/standard/conformance/run-all.mjs",
-		"test:standard": "node tests/standard/run-all.mjs"
+		"test:standard": "node tests/standard/run-all.mjs",
+		"fixtures:junit:refresh": "node tests/native/junit-producers/generate.mjs && biome format --write tests/native/junit-fixtures/manifest.json"
 	},
 	"bin": {
 		"junit-to-ctrf": "./dist/cli.js"

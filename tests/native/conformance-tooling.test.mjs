@@ -70,7 +70,9 @@ describe("native conformance tooling", () => {
 					assert.equal(valuesAt(sample.report, item.path).length, 0, item.id);
 	});
 	it("checks independent test inventory, omission and final diagnostics", () => {
-		for (const sample of context.samples) {
+		for (const sample of context.samples.filter(
+			(item) => !item.native.authentic,
+		)) {
 			assert.equal(
 				sample.report.results.tests.length,
 				sample.native.cases.length,
@@ -107,6 +109,107 @@ describe("native conformance tooling", () => {
 				assert.equal(Object.hasOwn(sample.report, "runId"), false);
 		}
 	});
+	it("retains authentic source provenance and native inventories", () => {
+		const samples = context.samples.filter((sample) => sample.native.authentic);
+		assert.deepEqual(
+			samples.map((sample) => sample.native.fixture.id),
+			["playwright", "vitest", "mocha-xunit", "go"],
+		);
+		for (const sample of samples) {
+			assert.equal(sample.native.fixture.sourceExit, 1);
+			assert.ok(sample.native.fixture.framework);
+			assert.equal(
+				sample.native.fixture.native.length,
+				sample.native.cases.length,
+			);
+		}
+	});
+	it("converts authentic outcomes without inventing unavailable retry metadata", () => {
+		for (const sample of context.samples.filter(
+			(item) => item.native.authentic,
+		)) {
+			assert.deepEqual(
+				sample.report.results.tests.map((test) => [
+					test.name,
+					test.status,
+					test.duration,
+					test.suite,
+				]),
+				sample.expected.results.tests.map((test) => [
+					test.name,
+					test.status,
+					test.duration,
+					test.suite,
+				]),
+			);
+			for (const test of sample.report.results.tests) {
+				assert.equal(test.retries, undefined);
+				assert.equal(test.retryAttempts, undefined);
+				assert.equal(test.flaky, undefined);
+			}
+		}
+	});
+
+	it("accepts only the reproduced authentic trace omission at both levels", () => {
+		const traceEntry = catalogue.entries.find(
+			(item) => item.path === "results.tests[].trace",
+		);
+		for (const level of ["unit", "integration"])
+			assert.equal(
+				runConformance(traceEntry, context, level).issue,
+				"junit-plain-text-failure-trace",
+			);
+	});
+	it("fails restored or different authentic traces", () => {
+		const traceEntry = catalogue.entries.find(
+			(item) => item.path === "results.tests[].trace",
+		);
+		for (const fixed of [true, false]) {
+			const changed = clone(),
+				sample = changed.samples.find(
+					(item) => item.name === "authentic-mocha-xunit",
+				);
+			sample.report.results.tests[1].trace = fixed
+				? sample.native.cases[1].trace
+				: "different trace";
+			assert.throws(
+				() => runConformance(traceEntry, changed, "unit"),
+				fixed ? /Unexpected pass/u : /source mapping/u,
+			);
+		}
+	});
+	it("rejects changed authentic baseline source evidence and infrastructure errors", () => {
+		const traceEntry = catalogue.entries.find(
+			(item) => item.path === "results.tests[].trace",
+		);
+		for (const mutate of [
+			(sample) => {
+				sample.native.fixture.sha256 = "different";
+			},
+			(sample) => {
+				sample.native.cases[1].trace = "different";
+			},
+		]) {
+			const changed = clone();
+			mutate(
+				changed.samples.find((item) => item.name === "authentic-mocha-xunit"),
+			);
+			assert.throws(
+				() => runConformance(traceEntry, changed, "unit"),
+				/source mapping/u,
+			);
+		}
+		assert.equal(
+			matchesKnownFailure(
+				traceEntry,
+				context.samples.find((item) => item.name === "authentic-mocha-xunit"),
+				expectedFailure(traceEntry, "unit"),
+				new Error("module missing"),
+			),
+			false,
+		);
+	});
+
 	it("distinguishes duplicate names, display prefixes and custom identities", () => {
 		const full = context.samples.find((sample) => sample.name === "full").report
 			.results.tests;

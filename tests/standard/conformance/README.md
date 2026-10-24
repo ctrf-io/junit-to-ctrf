@@ -19,6 +19,9 @@ globs. It needs npm registry access. Missing setup fails the run. Source test
 execution times are independent of conversion timestamps; this converter currently
 emits zero summary endpoints and does not infer unavailable attempt durations.
 
+Stored [framework-generated XML](../../native/junit-fixtures/README.md) also
+supplies evidence at both levels. Its guide describes source provenance and refresh.
+
 Temporary consumers are cleaned automatically. Set `CTRF_STANDARD_ARTIFACTS` to an
 absolute directory outside the checkout to retain integration reports and logs.
 

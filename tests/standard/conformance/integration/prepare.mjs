@@ -13,6 +13,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { expectedReport, scenarios, xml } from "../../../native/fixtures.mjs";
+import { authenticScenarios } from "../../../native/authentic-junit.mjs";
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
 const digest = (file) =>
 	createHash("sha256").update(readFileSync(file)).digest("hex");
@@ -83,7 +84,7 @@ export function integrationContext(root, diagnostics) {
 				JSON.stringify(info, null, 2),
 			);
 		const samples = [];
-		for (const scenario of scenarios()) {
+		for (const scenario of [...scenarios(), ...authenticScenarios()]) {
 			const folder = path.join(scratch, scenario.name);
 			mkdirSync(folder);
 			const groups = scenario.glob
@@ -91,7 +92,8 @@ export function integrationContext(root, diagnostics) {
 				: [scenario.cases];
 			const sources = groups.map((cases, index) => {
 				const file = path.join(folder, `input-${index}.xml`);
-				writeFileSync(file, xml(cases, scenario.nested));
+				if (scenario.authentic) copyFileSync(scenario.sourceFile, file);
+				else writeFileSync(file, xml(cases, scenario.nested));
 				return { file, cases };
 			});
 			const config = {

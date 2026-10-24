@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="3" failures="1" skipped="1">
+	<testsuite name="example.com/ctrf-junit-fixture" tests="3" failures="1" errors="0" id="0" hostname="Mac" skipped="1" time="0.148" timestamp="2026-10-20T21:03:39+01:00">
+		<testcase name="TestPass" classname="example.com/ctrf-junit-fixture" time="0.000">
+			<system-out><![CDATA[    cases_test.go:5: go pass output]]></system-out>
+		</testcase>
+		<testcase name="TestFailure" classname="example.com/ctrf-junit-fixture" time="0.000">
+			<failure message="Failed"><![CDATA[    cases_test.go:6: go fixture failure]]></failure>
+		</testcase>
+		<testcase name="TestSkip" classname="example.com/ctrf-junit-fixture" time="0.000">
+			<skipped message="Skipped"><![CDATA[    cases_test.go:7: go fixture skip]]></skipped>
+		</testcase>
+	</testsuite>
+</testsuites>
