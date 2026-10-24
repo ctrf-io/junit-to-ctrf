@@ -1,0 +1,290 @@
+{
+	"node": "v24.21.0",
+	"sources": {
+		"generate.mjs": "8096875b3b4f4bcc770765b561818a639de1753c4286943ccc92f51a46a4bb34",
+		"package.json": "4a0f7ac8f3ff08c1d2c14189050387706332eef981120776438a9cc1a1626b46",
+		"package-lock.json": "976f2809b648e55899f6192dcb77ff94023cacf166f89d71820423ac263d57df",
+		"playwright/cases.spec.cjs": "60459ad4d27b1241c1b0a026ad28dce079f82799a16819ec40e206d4d9207ae6",
+		"playwright/playwright.config.cjs": "28bab6a7fba163ab7b306e1fdc1969cca6f2617a4c2a49e24505615f4aed6603",
+		"vitest/cases.test.mjs": "6efd365b1dc283a7b5d8574816350be532496b0c7e6c589d43f3b24b99302253",
+		"vitest/vitest.config.mjs": "e60d0b1838f833ee1889108afe0d2fa33aef089e18e8b3ced4b487a12fdf27de",
+		"mocha/cases.cjs": "189f8a29d37776290bf0fc77131e0f513dbde5b3c77a6cf8ecc20e4e51762f92",
+		"mocha/run.cjs": "00fb815b6c618ea9a0f44e319ac0d3bc46f0582fbbb7d88b25a4a6b20caa752f",
+		"go/go.mod": "6b0b9f95a43656dbd907bdd5c36d6acc45a9ee6b93cbf58760a423d011129c90",
+		"go/cases_test.go": "28875b3449d194cea2a70bf6f403d7d767e007e26ac85e1c83d984b8911fb6a3"
+	},
+	"reports": [
+		{
+			"id": "playwright",
+			"file": "playwright.xml",
+			"sha256": "e990639a6383b6b1c3155acd12cb7119f6b57cf16752b266d318383583048d82",
+			"framework": "@playwright/test@1.64.1",
+			"exporter": "built-in",
+			"sourceExit": 1,
+			"cases": [
+				{
+					"name": "native suite › pass ✓",
+					"suite": "cases.spec.cjs",
+					"duration": 1,
+					"status": "passed"
+				},
+				{
+					"name": "native suite › failure",
+					"suite": "cases.spec.cjs",
+					"duration": 0,
+					"status": "failed",
+					"trace": "\n  cases.spec.cjs:7:2 › native suite › failure ──────────────────────────────────────────────────────\n\n    Error: playwright fixture failure\n\n       6 | \t});\n       7 | \ttest(\"failure\", () => {\n    >  8 | \t\tthrow new Error(\"playwright fixture failure\");\n         | \t\t      ^\n       9 | \t});\n      10 | \ttest.skip(\"skipped\", () => {});\n      11 | \ttest(\"retry recovery\", ({ browserName }, info) => {\n        at /private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/playwright/cases.spec.cjs:8:9\n\n    Error Context: ../test-results/cases-native-suite-failure/error-context.md\n\n    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────\n\n    Error: playwright fixture failure\n\n       6 | \t});\n       7 | \ttest(\"failure\", () => {\n    >  8 | \t\tthrow new Error(\"playwright fixture failure\");\n         | \t\t      ^\n       9 | \t});\n      10 | \ttest.skip(\"skipped\", () => {});\n      11 | \ttest(\"retry recovery\", ({ browserName }, info) => {\n        at /private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/playwright/cases.spec.cjs:8:9\n\n    Error Context: ../test-results/cases-native-suite-failure-retry1/error-context.md\n\n",
+					"message": "playwright fixture failure"
+				},
+				{
+					"name": "native suite › skipped",
+					"suite": "cases.spec.cjs",
+					"duration": 0,
+					"status": "skipped"
+				},
+				{
+					"name": "native suite › retry recovery",
+					"suite": "cases.spec.cjs",
+					"duration": 3,
+					"status": "passed"
+				}
+			],
+			"native": [
+				{
+					"name": "native suite › pass ✓",
+					"status": "passed",
+					"duration": 1,
+					"attempts": [
+						{
+							"status": "passed",
+							"duration": 1
+						}
+					]
+				},
+				{
+					"name": "native suite › failure",
+					"status": "failed",
+					"duration": 0,
+					"attempts": [
+						{
+							"status": "failed",
+							"duration": 0
+						},
+						{
+							"status": "failed",
+							"duration": 0
+						}
+					]
+				},
+				{
+					"name": "native suite › skipped",
+					"status": "skipped",
+					"duration": 0,
+					"attempts": [
+						{
+							"status": "skipped",
+							"duration": 0
+						}
+					]
+				},
+				{
+					"name": "native suite › retry recovery",
+					"status": "passed",
+					"duration": 3,
+					"attempts": [
+						{
+							"status": "failed",
+							"duration": 2
+						},
+						{
+							"status": "passed",
+							"duration": 1
+						}
+					]
+				}
+			]
+		},
+		{
+			"id": "vitest",
+			"file": "vitest.xml",
+			"sha256": "533bc9fe69684244433260ab26979560b70cf7be1790a667148349e06c9d86d8",
+			"framework": "vitest@5.0.5",
+			"exporter": "built-in",
+			"sourceExit": 1,
+			"cases": [
+				{
+					"name": "native suite > pass ✓",
+					"suite": "vitest/cases.test.mjs",
+					"duration": 1,
+					"status": "passed"
+				},
+				{
+					"name": "native suite > failure",
+					"suite": "vitest/cases.test.mjs",
+					"duration": 1,
+					"status": "failed",
+					"trace": "\nError: vitest fixture failure\n ❯ vitest/cases.test.mjs:9:9\n            ",
+					"message": "vitest fixture failure"
+				},
+				{
+					"name": "native suite > skipped",
+					"suite": "vitest/cases.test.mjs",
+					"duration": 0,
+					"status": "skipped"
+				},
+				{
+					"name": "native suite > retry recovery",
+					"suite": "vitest/cases.test.mjs",
+					"duration": 1,
+					"status": "passed"
+				}
+			],
+			"native": [
+				{
+					"name": "native suite > pass ✓",
+					"nativeName": "native suite pass ✓",
+					"recoveredAfterFailure": false,
+					"status": "passed",
+					"duration": 0.6352079999999987
+				},
+				{
+					"name": "native suite > failure",
+					"nativeName": "native suite failure",
+					"recoveredAfterFailure": false,
+					"status": "failed",
+					"duration": 0.8785419999999959
+				},
+				{
+					"name": "native suite > skipped",
+					"nativeName": "native suite skipped",
+					"recoveredAfterFailure": false,
+					"status": "skipped",
+					"duration": 0
+				},
+				{
+					"name": "native suite > retry recovery",
+					"nativeName": "native suite retry recovery",
+					"recoveredAfterFailure": true,
+					"status": "passed",
+					"duration": 1.1011669999999967
+				}
+			]
+		},
+		{
+			"id": "mocha-xunit",
+			"file": "mocha-xunit.xml",
+			"sha256": "ee6b90fd9f78018e84d597a2d4ac83cf2deac8fb917f96077226a36465debef9",
+			"framework": "mocha@12.0.3",
+			"exporter": "built-in",
+			"sourceExit": 1,
+			"cases": [
+				{
+					"name": "pass ✓",
+					"suite": "Mocha Tests",
+					"duration": 0,
+					"status": "passed",
+					"file": "/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/mocha/cases.cjs"
+				},
+				{
+					"name": "failure",
+					"suite": "Mocha Tests",
+					"duration": 0,
+					"status": "failed",
+					"trace": "mocha fixture failure\nError: mocha fixture failure\n    at Context.<anonymous> (mocha/cases.cjs:6:9)\n    at process.processImmediate (node:internal/timers:574:21)",
+					"file": "/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/mocha/cases.cjs"
+				},
+				{
+					"name": "skipped",
+					"suite": "Mocha Tests",
+					"duration": 0,
+					"status": "skipped",
+					"file": "/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/mocha/cases.cjs"
+				},
+				{
+					"name": "retry recovery",
+					"suite": "Mocha Tests",
+					"duration": 0,
+					"status": "passed",
+					"file": "/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/mocha/cases.cjs"
+				}
+			],
+			"native": [
+				{
+					"name": "pass ✓",
+					"fullName": "native suite pass ✓",
+					"status": "passed",
+					"duration": 0,
+					"retries": 0
+				},
+				{
+					"name": "failure",
+					"fullName": "native suite failure",
+					"status": "failed",
+					"duration": 0,
+					"retries": 0
+				},
+				{
+					"name": "skipped",
+					"fullName": "native suite skipped",
+					"status": "skipped",
+					"duration": 0,
+					"retries": 0
+				},
+				{
+					"name": "retry recovery",
+					"fullName": "native suite retry recovery",
+					"status": "passed",
+					"duration": 0,
+					"retries": 1
+				}
+			]
+		},
+		{
+			"id": "go",
+			"file": "go.xml",
+			"sha256": "2bcace70232acf47c41f958979584c299618a2abf0ae5195967a3f0dbe8ebc6b",
+			"framework": "go version go1.27.1 darwin/arm64",
+			"exporter": "go-junit-report/v2@v2.1.0 (gojson parser)",
+			"sourceExit": 1,
+			"cases": [
+				{
+					"name": "TestPass",
+					"suite": "example.com/ctrf-junit-fixture",
+					"duration": 0,
+					"status": "passed"
+				},
+				{
+					"name": "TestFailure",
+					"suite": "example.com/ctrf-junit-fixture",
+					"duration": 0,
+					"status": "failed",
+					"trace": "    cases_test.go:6: go fixture failure",
+					"message": "Failed"
+				},
+				{
+					"name": "TestSkip",
+					"suite": "example.com/ctrf-junit-fixture",
+					"duration": 0,
+					"status": "skipped"
+				}
+			],
+			"native": [
+				{
+					"name": "TestPass",
+					"status": "passed",
+					"duration": 0
+				},
+				{
+					"name": "TestFailure",
+					"status": "failed",
+					"duration": 0
+				},
+				{
+					"name": "TestSkip",
+					"status": "skipped",
+					"duration": 0
+				}
+			]
+		}
+	]
+}

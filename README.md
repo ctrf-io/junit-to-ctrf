@@ -141,3 +141,10 @@ CTRF is a universal JSON test report schema that addresses the lack of a standar
 ## Support Us
 
 If you find this project useful, consider giving it a GitHub star ⭐ It means a lot to us.
+
+## Development tests
+
+Existing converter regressions and integration smoke remain separate from the
+standard conformance suites. See [Contributing](CONTRIBUTING.md#conformance-tests)
+and the [conformance suite guide](tests/standard/conformance/README.md) for setup,
+capabilities and result handling.

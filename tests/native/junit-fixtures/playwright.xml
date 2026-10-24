@@ -1,0 +1,68 @@
+<testsuites id="" name="" tests="4" failures="0" skipped="1" errors="1" time="0.5527529999999999">
+<testsuite name="cases.spec.cjs" timestamp="2026-10-24T09:26:36.037Z" hostname="" tests="4" failures="0" skipped="1" time="0.004" errors="1">
+<testcase name="native suite › pass ✓" classname="cases.spec.cjs" time="0.001">
+<system-out>
+<![CDATA[playwright pass output
+]]>
+</system-out>
+</testcase>
+<testcase name="native suite › failure" classname="cases.spec.cjs" time="0">
+<system-out>
+<![CDATA[
+[[ATTACHMENT|test-results/cases-native-suite-failure/error-context.md]]
+
+[[ATTACHMENT|test-results/cases-native-suite-failure-retry1/error-context.md]]
+]]>
+</system-out>
+<error message="playwright fixture failure" type="Error">
+<![CDATA[  cases.spec.cjs:7:2 › native suite › failure ──────────────────────────────────────────────────────
+
+    Error: playwright fixture failure
+
+       6 | 	});
+       7 | 	test("failure", () => {
+    >  8 | 		throw new Error("playwright fixture failure");
+         | 		      ^
+       9 | 	});
+      10 | 	test.skip("skipped", () => {});
+      11 | 	test("retry recovery", ({ browserName }, info) => {
+        at /private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/playwright/cases.spec.cjs:8:9
+
+    Error Context: ../test-results/cases-native-suite-failure/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: playwright fixture failure
+
+       6 | 	});
+       7 | 	test("failure", () => {
+    >  8 | 		throw new Error("playwright fixture failure");
+         | 		      ^
+       9 | 	});
+      10 | 	test.skip("skipped", () => {});
+      11 | 	test("retry recovery", ({ browserName }, info) => {
+        at /private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/playwright/cases.spec.cjs:8:9
+
+    Error Context: ../test-results/cases-native-suite-failure-retry1/error-context.md
+]]>
+</error>
+</testcase>
+<testcase name="native suite › skipped" classname="cases.spec.cjs">
+<properties>
+<property name="skip" value="">
+</property>
+</properties>
+<skipped>
+</skipped>
+</testcase>
+<testcase name="native suite › retry recovery" classname="cases.spec.cjs" time="0.003">
+<system-out>
+<![CDATA[playwright attempt 0
+
+[[ATTACHMENT|test-results/cases-native-suite-retry-recovery/error-context.md]]
+playwright attempt 1
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>
