@@ -4,7 +4,7 @@ const traceFamily = "conformance/property/results.tests[].trace";
 const missingTrace =
 	"mocha fixture failure\nError: mocha fixture failure\n    at Context.<anonymous> (mocha/cases.cjs:6:9)\n    at process.processImmediate (node:internal/timers:574:21)";
 const traceFixtureSha =
-	"c73b93b70c80768fc566caa68d9770a441b40f299f0a548feec6b0e3b8ead15c";
+	"ee6b90fd9f78018e84d597a2d4ac83cf2deac8fb917f96077226a36465debef9";
 const family = "conformance/report/respects-reserved-extension-ownership";
 export const expectedFailures = {
 	[traceFamily]: {

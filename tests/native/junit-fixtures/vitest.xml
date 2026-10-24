@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="4" failures="1" errors="0" time="0.002918417">
-    <testsuite name="vitest/cases.test.mjs" timestamp="2026-10-20T20:03:36.542Z" hostname="Mac" tests="4" failures="1" errors="0" skipped="1" time="0.002918417">
-        <testcase classname="vitest/cases.test.mjs" name="native suite &gt; pass ✓" time="0.000627708">
+<testsuites name="vitest tests" tests="4" failures="1" errors="0" time="0.003032542">
+    <testsuite name="vitest/cases.test.mjs" timestamp="2026-10-24T09:26:37.048Z" hostname="Mac" tests="4" failures="1" errors="0" skipped="1" time="0.003032542">
+        <testcase classname="vitest/cases.test.mjs" name="native suite &gt; pass ✓" time="0.000635208">
             <system-out>
 vitest pass output
 
             </system-out>
         </testcase>
-        <testcase classname="vitest/cases.test.mjs" name="native suite &gt; failure" time="0.000804333">
+        <testcase classname="vitest/cases.test.mjs" name="native suite &gt; failure" time="0.000878542">
             <failure message="vitest fixture failure" type="Error">
 Error: vitest fixture failure
  ❯ vitest/cases.test.mjs:9:9
@@ -16,7 +16,7 @@ Error: vitest fixture failure
         <testcase classname="vitest/cases.test.mjs" name="native suite &gt; skipped" time="0">
             <skipped/>
         </testcase>
-        <testcase classname="vitest/cases.test.mjs" name="native suite &gt; retry recovery" time="0.001078167">
+        <testcase classname="vitest/cases.test.mjs" name="native suite &gt; retry recovery" time="0.001101167">
         </testcase>
     </testsuite>
 </testsuites>

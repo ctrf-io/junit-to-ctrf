@@ -1,9 +1,9 @@
-<testsuite name="Mocha Tests" tests="4" failures="0" errors="1" skipped="1" timestamp="Tue, 20 Oct 2026 20:03:36 GMT" time="0.001">
-<testcase classname="native suite" name="pass &#x2713;" file="/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-gNSYNw/mocha/cases.cjs" time="0.001"/>
-<testcase classname="native suite" name="failure" file="/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-gNSYNw/mocha/cases.cjs" time="0"><failure>mocha fixture failure
+<testsuite name="Mocha Tests" tests="4" failures="0" errors="1" skipped="1" timestamp="Sat, 24 Oct 2026 09:26:37 GMT" time="0.002">
+<testcase classname="native suite" name="pass &#x2713;" file="/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/mocha/cases.cjs" time="0"/>
+<testcase classname="native suite" name="failure" file="/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/mocha/cases.cjs" time="0"><failure>mocha fixture failure
 Error: mocha fixture failure
     at Context.&#x3C;anonymous&#x3E; (mocha/cases.cjs:6:9)
     at process.processImmediate (node:internal/timers:574:21)</failure></testcase>
-<testcase classname="native suite" name="skipped" file="/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-gNSYNw/mocha/cases.cjs" time="0"><skipped/></testcase>
-<testcase classname="native suite" name="retry recovery" file="/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-gNSYNw/mocha/cases.cjs" time="0"/>
+<testcase classname="native suite" name="skipped" file="/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/mocha/cases.cjs" time="0"><skipped/></testcase>
+<testcase classname="native suite" name="retry recovery" file="/private/var/folders/ks/gvgx92252s14v_15h27tw6480000gn/T/ctrf-junit-producers-AxrdPv/mocha/cases.cjs" time="0"/>
 </testsuite>
