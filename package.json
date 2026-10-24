@@ -26,7 +26,12 @@
 		"docs": "typedoc",
 		"docs:watch": "typedoc --watch",
 		"all": "npm run build:check && npm run test && npm run lint && npm run format && npm run docs && npm run build && npm run check",
-		"check": "biome check ."
+		"check": "biome check .",
+		"test:standard:checker": "node tests/standard/checker/run.mjs",
+		"test:standard:conformance:unit": "node tests/standard/conformance/run.mjs unit",
+		"test:standard:conformance:integration": "node tests/standard/conformance/run.mjs integration",
+		"test:standard:conformance": "node tests/standard/conformance/run-all.mjs",
+		"test:standard": "node tests/standard/run-all.mjs"
 	},
 	"bin": {
 		"junit-to-ctrf": "./dist/cli.js"
@@ -63,10 +68,12 @@
 		"@types/node": "26.6.5",
 		"@types/xml2js": "0.4.14",
 		"@types/yargs": "17.0.35",
+		"@typescript/native": "npm:typescript@7.0.2",
+		"ajv": "8.20.0",
+		"ajv-formats": "3.0.1",
 		"typedoc": "0.28.20",
 		"typedoc-plugin-markdown": "4.13.1",
 		"typescript": "npm:@typescript/typescript6@6.0.2",
-		"vitest": "5.0.3",
-		"@typescript/native": "npm:typescript@7.0.2"
+		"vitest": "5.0.3"
 	}
 }

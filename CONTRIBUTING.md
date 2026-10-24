@@ -60,3 +60,50 @@ aliases separate when updating dependencies. Both are development dependencies
 and do not change the package’s production Node requirement.
 
 See [Microsoft’s side-by-side setup](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/#running-side-by-side-with-typescript-6.0).
+
+### Conformance tests
+
+For reporter output changes, update the affected conformance fixtures and run:
+
+```bash
+npm run test:standard:conformance:unit
+npm run test:standard:conformance:integration
+```
+
+`npm run test:standard:conformance` runs both levels even when unit fails.
+The [suite guide](tests/standard/conformance/README.md) explains setup and file roles.
+Unit tests use controlled native inputs; integration tests install the packed
+converter and exercise its real API and CLI against independent XML source
+expectations. They remain separate from `npm test` and the original integration smoke.
+
+Keep common family IDs stable, update `junit.json` when capabilities change,
+and provide positive evidence for supported properties. Unsupported optional
+features are skipped with reasons; unrecorded broken behavior must fail.
+Expected-failure entries in `tests/standard/conformance/expected-failures.mjs`
+must identify a durable fix follow-up and match specific levels/samples. Keep
+checks running;
+unexpected passes and changed failures must fail. Remove markers with the fix.
+Check schema and written-specification implications, including valid omission and
+conditional rules. Recommendations remain advisory. Do not change expectations
+to match incorrect reporter output.
+
+CI runs both conformance levels as separate steps in the existing test/build
+job on Node 22, 24 and 26. A unit failure does not prevent integration from running.
+The job publishes CTRF results for both levels through GitHub Test Reporter, with
+the built-in summary and folded suite table, grouped by level and check category.
+Node 24 also maintains one PR comment tagged `reporter-conformance`, overwriting it on later runs. It describes
+the reference runtime; check the full matrix for compatibility results. Fork PRs
+keep build summaries/artifacts without posting a comment. Expected failures retain
+explicit test-name labels and use Other with defect metadata rather than passed.
+Unit/integration names and identities stay distinct; the conformance comment
+contains contract families only. Shared checker controls use the same independent
+fixtures and test IDs across reporters, run with `npm run test:standard:checker`,
+and publish separately under `reporter-checker`. Reporter-specific fixture,
+matcher and reporting controls belong in the reporter's own tests and
+`reporter-tests` results. `npm run test:standard` runs all standard suites.
+CTRF artifacts, conformance summaries and integration reports/logs are retained,
+including on failure. Standard suites use the native Node test runner and the
+shared CTRF writer. Ordinary tests use the default and CTRF reporters configured in `vitest.config.ts`; no
+additional runner JSON output is required.
+In your PR, include commands and results and explain skips, expected failures and
+warnings. Track defect details and fixes in GitHub issues rather than these docs.

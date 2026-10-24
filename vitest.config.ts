@@ -2,7 +2,7 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
 	test: {
-		reporters: ["default", "@d2t/vitest-ctrf-json-reporter"],
+		reporters: ["default", "./tests/reporters/vitest.mjs"],
 		coverage: {
 			provider: "v8",
 			reporter: ["text", "json", "html"],
@@ -19,7 +19,7 @@ export default defineConfig({
 		},
 		environment: "node",
 		globals: false,
-		include: ["src/**/*.{test,spec}.{js,ts}"],
+		include: ["src/**/*.{test,spec}.{js,ts}", "tests/native/*.test.mjs"],
 		exclude: ["node_modules/", "dist/", "coverage/"],
 	},
 });

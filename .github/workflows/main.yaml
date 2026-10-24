@@ -54,6 +54,7 @@ jobs:
     permissions:
       contents: read
       actions: read
+      pull-requests: write
 
     steps:
       - name: Checkout
@@ -65,56 +66,129 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: npm
 
+      - name: Prepare test diagnostics
+        run: |
+          echo "CTRF_STANDARD_ARTIFACTS=$RUNNER_TEMP/conformance" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/conformance"
+
       - name: Install
+        id: install
         run: npm ci
 
       - name: Test
         run: npm test
 
       - name: Build
+        id: build
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: npm run build
 
       - name: Run against junit
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: npm run e2e:junit
 
       - name: Run against junit nested
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: npm run e2e:junit-nested
 
       - name: Run against minitest
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: npm run e2e:minitest
 
       - name: Run against surefire
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: npm run e2e:surefire
 
       - name: Run against surefire flaky
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: npm run e2e:surefire-flaky
 
       - name: Run against surefire retry
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: npm run e2e:surefire-retry
 
       - name: Run against junit problem string
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: npm run e2e:junit-problem-string
 
       - name: Run against glob
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: npm run e2e:glob
 
-      - name: Publish Test Results
+      - name: Run shared checker controls
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: npm run test:standard:checker
+
+      - name: Run unit conformance
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: npm run test:standard:conformance:unit
+
+      - name: Run installed-package conversion conformance
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: npm run test:standard:conformance:integration
+
+      - name: Publish reporter tests
         uses: ctrf-io/github-test-reporter@v1
+        if: ${{ !cancelled() && hashFiles('ctrf/reporter-tests.json') != '' }}
         with:
-          report-path: './ctrf/*.json'
-          github-report: true
-          failed-report: true
-          flaky-report: true
-          insights-report: true
-          fail-rate-report: true
-          flaky-rate-report: true
-          slowest-report: true
-          previous-results-report: true
+          report-path: './ctrf/reporter-tests.json'
+          title: 'Reporter tests (Node ${{ matrix.node }})'
+          summary-report: true
+          test-report: true
+          pull-request: ${{ matrix.node == '24' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          overwrite-comment: true
+          comment-tag: reporter-tests
+          collapse-large-reports: true
           upload-artifact: true
-          artifact-name: ctrf-test-report-node-${{ matrix.node }}
+          artifact-name: ctrf-reporter-tests-node-${{ matrix.node }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        if: always() && hashFiles('ctrf/*.json') != ''
+
+      - name: Publish conformance test reports
+        uses: ctrf-io/github-test-reporter@v1
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        with:
+          report-path: '${{ runner.temp }}/conformance/reports/*.json'
+          title: 'Reporter conformance — contract families (Node ${{ matrix.node }})'
+          summary-report: true
+          suite-folded-report: true
+          group-by: suite
+          pull-request: ${{ matrix.node == '24' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          overwrite-comment: true
+          comment-tag: reporter-conformance
+          collapse-large-reports: true
+          upload-artifact: true
+          artifact-name: ctrf-conformance-node-${{ matrix.node }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish shared checker controls
+        uses: ctrf-io/github-test-reporter@v1
+        if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        with:
+          report-path: '${{ runner.temp }}/conformance/checker-reports/*.json'
+          title: 'Shared checker controls (Node ${{ matrix.node }})'
+          summary-report: true
+          suite-folded-report: true
+          group-by: suite
+          pull-request: ${{ matrix.node == '24' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+          overwrite-comment: true
+          comment-tag: reporter-checker
+          upload-artifact: true
+          artifact-name: ctrf-checker-node-${{ matrix.node }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload results and conversion diagnostics
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reporter-evidence-node-${{ matrix.node }}
+          path: |
+            ${{ runner.temp }}/conformance/
+            ctrf/reporter-tests.json
+          include-hidden-files: true
+          if-no-files-found: warn
 
   security:
     name: Security (deps audit)
