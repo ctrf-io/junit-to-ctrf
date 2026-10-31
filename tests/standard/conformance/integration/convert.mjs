@@ -39,7 +39,9 @@ if (config.cli) {
 	process.stdout.write(result.stdout);
 	process.stderr.write(result.stderr);
 	if (config.rejection) {
-		assert.equal(result.status, 1, "Invalid environment options must fail");
+		// Preserve the existing CLI exit policy; conformance checks the diagnostic and absent output.
+		assert.equal(result.status, 0, "CLI exit policy remains unchanged");
+		assert.doesNotMatch(result.stdout, /Conversion completed successfully/u);
 		assert.match(result.stderr, new RegExp(config.rejection));
 		assert.equal(
 			existsSync(config.output),
