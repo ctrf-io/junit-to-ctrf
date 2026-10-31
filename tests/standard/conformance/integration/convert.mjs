@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 const config = JSON.parse(readFileSync(process.argv[2], "utf8"));
@@ -38,11 +38,37 @@ if (config.cli) {
 	assert.equal(result.signal, null);
 	process.stdout.write(result.stdout);
 	process.stderr.write(result.stderr);
-	assert.equal(result.status, 0, "Valid XML conversion must complete");
+	if (config.rejection) {
+		// Preserve the existing CLI exit policy; conformance checks the diagnostic and absent output.
+		assert.equal(result.status, 0, "CLI exit policy remains unchanged");
+		assert.doesNotMatch(result.stdout, /Conversion completed successfully/u);
+		assert.match(result.stderr, new RegExp(config.rejection));
+		assert.equal(
+			existsSync(config.output),
+			false,
+			"Rejected options must not write a report",
+		);
+	} else assert.equal(result.status, 0, "Valid XML conversion must complete");
 } else {
 	const { convertJUnitToCTRFReport } = await import(
 		pathToFileURL(path.join(installed, "dist/index.js"))
 	);
+	if (config.rejection) {
+		await assert.rejects(
+			() =>
+				convertJUnitToCTRFReport(config.pattern, {
+					...config.options,
+					outputPath: config.output,
+				}),
+			new RegExp(config.rejection),
+		);
+		assert.equal(
+			existsSync(config.output),
+			false,
+			"Rejected options must not write a report",
+		);
+		process.exit(0);
+	}
 	const report = await convertJUnitToCTRFReport(config.pattern, {
 		...config.options,
 		outputPath: config.output,

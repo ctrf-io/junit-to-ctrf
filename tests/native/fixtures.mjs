@@ -150,11 +150,13 @@ export function scenarios() {
 		},
 		{
 			name: "reserved-dot",
+			rejection: "reserved CTRF extension namespace",
 			cases: [cases[0]],
 			options: { envProps: ["ctrf.fixture=third-party"] },
 		},
 		{
 			name: "reserved-slash",
+			rejection: "reserved CTRF extension namespace",
 			cases: [cases[0]],
 			options: { envProps: ["ctrf/fixture=third-party"] },
 		},

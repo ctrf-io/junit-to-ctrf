@@ -122,3 +122,71 @@ describe("converter identity", () => {
 		expect(() => validateStrict(one, { specVersion: "0.2.0" })).not.toThrow();
 	});
 });
+
+describe("JUnit diagnostic and extension regressions", () => {
+	it.each(["failure", "error"])(
+		"preserves plain text and attributed %s bodies",
+		async (tag) => {
+			const directory = await fs.mkdtemp(
+				path.join(os.tmpdir(), "junit-diagnostics-"),
+			);
+			try {
+				for (const attributes of [
+					"",
+					' message="fixture failure" type="FixtureError"',
+				]) {
+					const file = path.join(directory, "input.xml");
+					await fs.writeFile(
+						file,
+						`<testsuite name="suite"><testcase name="case" time="0.01"><${tag}${attributes}><![CDATA[fixture trace
+    at source.js:1:1]]></${tag}></testcase></testsuite>`,
+					);
+					const report = await convertJUnitToCTRFReport(file);
+					expect(report?.results.tests[0].trace).toBe(
+						"fixture trace\n    at source.js:1:1",
+					);
+					expect(report?.results.tests[0].status).toBe("failed");
+					if (attributes)
+						expect(report?.results.tests[0].message).toBe("fixture failure");
+					expect(() => validateStrict(report)).not.toThrow();
+				}
+			} finally {
+				await fs.rm(directory, { recursive: true, force: true });
+			}
+		},
+	);
+	it.each(["ctrf.fixture", "ctrf/fixture"])(
+		"rejects reserved environment key %s without writing a report",
+		async (key) => {
+			const directory = await fs.mkdtemp(
+				path.join(os.tmpdir(), "junit-reserved-"),
+			);
+			const outputPath = path.join(directory, "output.json");
+			try {
+				await expect(
+					convertJUnitToCTRFReport("reports/test-junit.xml", {
+						envProps: [`${key}=third-party`],
+						outputPath,
+					}),
+				).rejects.toThrow("reserved CTRF extension namespace");
+				await expect(fs.access(outputPath)).rejects.toThrow();
+			} finally {
+				await fs.rm(directory, { recursive: true, force: true });
+			}
+		},
+	);
+	it("preserves permitted vendor extension names", async () => {
+		const report = await convertJUnitToCTRFReport("reports/test-junit.xml", {
+			envProps: [
+				"vendor.fixture=value",
+				"vendor/fixture=value",
+				"ctrfixture=value",
+			],
+		});
+		expect(report?.results.environment?.extra).toEqual({
+			"vendor.fixture": "value",
+			"vendor/fixture": "value",
+			ctrfixture: "value",
+		});
+	});
+});

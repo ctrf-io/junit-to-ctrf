@@ -17,7 +17,7 @@ function parseRetryAttempts(elements: any[]): JUnitRetryAttempt[] {
 	return elements.map((element) => {
 		const message = element.$?.message || "";
 		const type = element.$?.type || "";
-		const trace = element._ || textContent(element.stackTrace?.[0]);
+		const trace = textContent(element) || textContent(element.stackTrace?.[0]);
 		const systemOut = textContent(element["system-out"]?.[0]);
 		const systemErr = textContent(element["system-err"]?.[0]);
 
@@ -87,7 +87,7 @@ export async function parseJUnitReport(
 
 				const hasFailure = testCase.failure !== undefined;
 				const failureTrace = hasFailure
-					? testCase.failure[0]?._ || ""
+					? textContent(testCase.failure[0])
 					: undefined;
 				const failureMessage = hasFailure
 					? testCase.failure[0]?.$?.message || ""
@@ -97,7 +97,9 @@ export async function parseJUnitReport(
 					: undefined;
 
 				const hasError = testCase.error !== undefined;
-				const errorTrace = hasError ? testCase.error[0]?._ || "" : undefined;
+				const errorTrace = hasError
+					? textContent(testCase.error[0])
+					: undefined;
 				const errorMessage = hasError
 					? testCase.error[0]?.$?.message || ""
 					: undefined;
