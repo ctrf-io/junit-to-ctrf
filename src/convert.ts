@@ -418,6 +418,11 @@ export function createCTRFReport(
 		const environment: Record<string, unknown> = {};
 		const extra: Record<string, string> = {};
 		for (const [key, value] of Object.entries(envProps)) {
+			if (key.startsWith("ctrf.") || key.startsWith("ctrf/")) {
+				throw new Error(
+					`Environment property "${key}" uses the reserved CTRF extension namespace`,
+				);
+			}
 			if (key === "buildNumber") {
 				const buildNumber = Number(value);
 				if (value.trim() === "" || !Number.isSafeInteger(buildNumber))

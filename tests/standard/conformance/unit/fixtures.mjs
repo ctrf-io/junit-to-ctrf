@@ -49,6 +49,18 @@ export async function unitContext(producer) {
 			};
 			const outputPath = path.join(directory, "output.json");
 			const start = Date.now();
+			if (scenario.rejection) {
+				await assert.rejects(
+					() =>
+						convertJUnitToCTRFReport(input, {
+							...scenario.options,
+							outputPath,
+						}),
+					new RegExp(scenario.rejection),
+				);
+				await assert.rejects(() => readFile(outputPath), { code: "ENOENT" });
+				continue;
+			}
 			await convertJUnitToCTRFReport(input, {
 				...scenario.options,
 				outputPath,

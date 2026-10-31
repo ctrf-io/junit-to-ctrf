@@ -15,7 +15,6 @@ import {
 } from "../standard/conformance/shared/checks.mjs";
 import {
 	expectedFailure,
-	matchesKnownFailure,
 	runConformance,
 } from "../standard/conformance/expected-failures.mjs";
 import { createReport } from "../standard/conformance/reporters/ctrf.mjs";
@@ -150,64 +149,31 @@ describe("native conformance tooling", () => {
 		}
 	});
 
-	it("accepts only the reproduced authentic trace omission at both levels", () => {
+	it("preserves authentic plain-text traces at both conformance levels", () => {
 		const traceEntry = catalogue.entries.find(
 			(item) => item.path === "results.tests[].trace",
 		);
-		for (const level of ["unit", "integration"])
-			assert.equal(
-				runConformance(traceEntry, context, level).issue,
-				"junit-plain-text-failure-trace",
-			);
-	});
-	it("fails restored or different authentic traces", () => {
-		const traceEntry = catalogue.entries.find(
-			(item) => item.path === "results.tests[].trace",
-		);
-		for (const fixed of [true, false]) {
-			const changed = clone(),
-				sample = changed.samples.find(
-					(item) => item.name === "authentic-mocha-xunit",
-				);
-			sample.report.results.tests[1].trace = fixed
-				? sample.native.cases[1].trace
-				: "different trace";
-			assert.throws(
-				() => runConformance(traceEntry, changed, "unit"),
-				fixed ? /Unexpected pass/u : /source mapping/u,
-			);
+		for (const level of ["unit", "integration"]) {
+			assert.equal(expectedFailure(traceEntry, level), undefined);
+			assert.equal(runConformance(traceEntry, context, level), undefined);
 		}
 	});
-	it("rejects changed authentic baseline source evidence and infrastructure errors", () => {
+	it("rejects missing or changed authentic trace mappings", () => {
 		const traceEntry = catalogue.entries.find(
 			(item) => item.path === "results.tests[].trace",
 		);
-		for (const mutate of [
-			(sample) => {
-				sample.native.fixture.sha256 = "different";
-			},
-			(sample) => {
-				sample.native.cases[1].trace = "different";
-			},
-		]) {
+		for (const value of [undefined, "different trace"]) {
 			const changed = clone();
-			mutate(
-				changed.samples.find((item) => item.name === "authentic-mocha-xunit"),
-			);
+			const test = changed.samples.find(
+				(item) => item.name === "authentic-mocha-xunit",
+			).report.results.tests[1];
+			if (value === undefined) delete test.trace;
+			else test.trace = value;
 			assert.throws(
 				() => runConformance(traceEntry, changed, "unit"),
 				/source mapping/u,
 			);
 		}
-		assert.equal(
-			matchesKnownFailure(
-				traceEntry,
-				context.samples.find((item) => item.name === "authentic-mocha-xunit"),
-				expectedFailure(traceEntry, "unit"),
-				new Error("module missing"),
-			),
-			false,
-		);
 	});
 
 	it("distinguishes duplicate names, display prefixes and custom identities", () => {
@@ -236,105 +202,27 @@ describe("native conformance tooling", () => {
 					assert.equal(attempt.duration, undefined);
 		}
 	});
-	it("accepts only the reproduced defect at both levels", () => {
-		for (const level of ["unit", "integration"])
-			assert.equal(
-				runConformance(entry, context, level).issue,
-				"junit-reserved-environment-extensions",
-			);
-	});
-	it("fails unexpected full fixes", () => {
-		const changed = clone();
-		for (const sample of changed.samples.filter((sample) =>
-			sample.name.startsWith("reserved-"),
-		))
-			delete sample.report.results.environment.extra;
-		assert.throws(
-			() => runConformance(entry, changed, "unit"),
-			/Unexpected pass/u,
-		);
-	});
-	it("fails partial fixes", () => {
-		const changed = clone();
-		delete changed.samples.find((sample) => sample.name === "reserved-slash")
-			.report.results.environment.extra;
-		assert.throws(
-			() => runConformance(entry, changed, "unit"),
-			/Unexpected pass/u,
-		);
-	});
-	it.each(["missing", "duplicate"])("fails %s baseline evidence", (kind) => {
-		const changed = clone();
-		if (kind === "missing")
-			changed.samples = changed.samples.filter(
-				(sample) => sample.name !== "reserved-dot",
-			);
-		else
-			changed.samples.push(
-				changed.samples.find((sample) => sample.name === "reserved-dot"),
-			);
-		assert.throws(
-			() => runConformance(entry, changed, "unit"),
-			/missing or duplicated/u,
-		);
-	});
-	it("fails changed native values and new reserved keys", () => {
-		for (const mutate of [
-			(sample) => {
-				sample.report.results.environment.extra["ctrf.fixture"] = "different";
-			},
-			(sample) => {
-				sample.report.results.environment.extra["ctrf.other"] = "third-party";
-			},
-			(sample) => {
-				sample.native.options.envProps = ["ctrf.fixture=different"];
-			},
-		]) {
+	it("checks extension ownership without expected failures", () => {
+		for (const level of ["unit", "integration"]) {
+			assert.equal(expectedFailure(entry, level), undefined);
+			assert.equal(runConformance(entry, context, level), undefined);
+		}
+		for (const key of ["ctrf.fixture", "ctrf/fixture"]) {
 			const changed = clone();
-			mutate(changed.samples.find((sample) => sample.name === "reserved-dot"));
+			changed.samples[0].report.results.environment.extra = {
+				[key]: "third-party",
+			};
 			assert.throws(
 				() => runConformance(entry, changed, "unit"),
 				/claimed reserved extension/u,
 			);
 		}
 	});
-	it("rejects infrastructure errors and unrelated families or levels", () => {
-		const sample = context.samples.find(
-			(sample) => sample.name === "reserved-dot",
-		);
-		assert.equal(
-			matchesKnownFailure(
-				entry,
-				sample,
-				expectedFailure(entry, "unit"),
-				new Error("socket failed"),
-			),
-			false,
-		);
-		assert.equal(expectedFailure(entry, "checker"), undefined);
-		assert.equal(expectedFailure({ id: "unrelated" }, "unit"), undefined);
-	});
-	it("checks unaffected samples after the known defects", () => {
-		const changed = clone();
-		changed.samples.push({
-			...structuredClone(changed.samples[0]),
-			name: "later",
-			report: {
-				...changed.samples[0].report,
-				extra: { "ctrf.unexpected": true },
-			},
-		});
-		assert.throws(
-			() => runConformance(entry, changed, "unit"),
-			/later: fixture producer/u,
-		);
-	});
-	it("publishes strict baselines as Other in exclusive groups", () => {
-		const issue = expectedFailure(entry, "unit");
+	it("retired exception labels stay ordinary reporter results", () => {
 		const report = createReport(
 			[
 				{
-					name: `${entry.id} [expected failure: ${issue.issue}]`,
+					name: `${entry.id} [expected failure: junit-reserved-environment-extensions]`,
 					status: "passed",
 				},
 			],
@@ -343,18 +231,11 @@ describe("native conformance tooling", () => {
 			0,
 			1,
 		);
-		assert.equal(report.results.summary.other, 1);
-		assert.equal(report.results.summary.passed, 0);
-		assert.equal(report.results.tests[0].rawStatus, "expected-failure");
-		assert.equal(
-			report.results.tests[0].extra.expectedFailure.issue,
-			issue.issue,
-		);
-		assert.equal(
-			report.results.tests[0].suite[1],
-			"Expected failures (tracked defects)",
-		);
+		assert.equal(report.results.summary.other, 0);
+		assert.equal(report.results.summary.passed, 1);
+		assert.equal(report.results.tests[0].extra?.expectedFailure, undefined);
 	});
+
 	it("keeps unexpected failure, skipped and pending results distinct", () => {
 		const report = createReport(
 			["failed", "skipped", "pending"].map((status) => ({

@@ -104,6 +104,7 @@ export function integrationContext(root, diagnostics) {
 				output: path.join(folder, "output.json"),
 				observations: path.join(folder, "observations.json"),
 				options: scenario.options,
+				rejection: scenario.rejection,
 				cli: ![
 					"full",
 					"repeated",
@@ -129,6 +130,21 @@ export function integrationContext(root, diagnostics) {
 				0,
 				`${scenario.name}: ${result.stdout} ${result.stderr}`,
 			);
+			if (scenario.rejection) {
+				// Reject invalid options through both installed interfaces, without fabricating a report.
+				config.cli = false;
+				writeFileSync(configFile, JSON.stringify(config));
+				const api = run(
+					process.execPath,
+					[
+						fileURLToPath(new URL("./convert.mjs", import.meta.url)),
+						configFile,
+					],
+					consumer,
+				);
+				assert.equal(api.status, 0, api.stdout + api.stderr);
+				continue;
+			}
 			const observations = JSON.parse(
 				readFileSync(config.observations, "utf8"),
 			);
