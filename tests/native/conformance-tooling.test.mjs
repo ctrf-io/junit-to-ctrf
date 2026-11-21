@@ -33,7 +33,7 @@ describe("native conformance tooling", () => {
 		const manifest = JSON.parse(
 			readFileSync(new URL("../standard/shared-files.json", import.meta.url)),
 		);
-		assert.equal(manifest.revision, "standard-checker-controls-v1");
+		assert.equal(manifest.revision, "standard-checker-controls-v2-0.3.0");
 		for (const [file, hash] of Object.entries(manifest.files))
 			assert.equal(
 				createHash("sha256")
