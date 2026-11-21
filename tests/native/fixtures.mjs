@@ -281,7 +281,7 @@ export function expectedReport(scenario) {
 	if (options.shardId) env.shardId = options.shardId;
 	return {
 		reportFormat: "CTRF",
-		specVersion: "0.2.0",
+		specVersion: "0.3.0",
 		generatedBy: "junit-to-ctrf",
 		...(options.runId ? { runId: options.runId } : {}),
 		results: {

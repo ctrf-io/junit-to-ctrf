@@ -62,7 +62,7 @@ describe("createCTRFReport", () => {
 
 		expect(report).toMatchObject({
 			reportFormat: "CTRF",
-			specVersion: "0.2.0",
+			specVersion: "0.3.0",
 			generatedBy: "junit-to-ctrf",
 			results: {
 				tool: {
